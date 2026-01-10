@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "报名信息",
+  "usingComponents": {
+    "custom-loading": "/components/custom-loading/custom-loading",
+    "empty-placeholder": "/components/empty-placeholder/empty-placeholder"
+  }
+}

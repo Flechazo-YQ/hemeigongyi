@@ -1,0 +1,109 @@
+<custom-loading show="{{loading}}" />
+<view class="page-container">
+  <view class="header-tip">
+    <text>请填写活动详细信息</text>
+  </view>
+
+  <view class="publish-card">
+    <view class="form-group">
+      <view class="label">活动名称 <text class="required">*</text></view>
+      <input class="input" placeholder="请输入活动名称" placeholder-class="placeholder" bindinput="handleInput" data-field="title" value="{{formData.title}}" />
+    </view>
+
+    <view class="form-group">
+      <view class="label">活动分类</view>
+      <picker bindchange="handleCategoryChange" value="{{categoryIndex}}" range="{{categories}}">
+        <view class="picker-view {{categoryIndex === -1 ? 'placeholder' : ''}}">
+          {{categoryIndex === -1 ? '请选择活动分类' : categories[categoryIndex]}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-group">
+      <view class="label">活动时间 <text class="required">*</text></view>
+      
+      <!-- Time Slot Picker Area -->
+      <view class="time-picker-area">
+        <view class="picker-row">
+          <picker mode="date" value="{{pickerDate}}" bindchange="bindDateChange" class="picker-item date-picker">
+            <view class="picker-inner">{{pickerDate}}</view>
+          </picker>
+          <view class="picker-separator"></view>
+          <picker mode="time" value="{{pickerStartTime}}" bindchange="bindStartTimeChange" class="picker-item time-picker">
+            <view class="picker-inner">{{pickerStartTime}}</view>
+          </picker>
+          <view class="picker-separator">-</view>
+          <picker mode="time" value="{{pickerEndTime}}" bindchange="bindEndTimeChange" class="picker-item time-picker">
+            <view class="picker-inner">{{pickerEndTime}}</view>
+          </picker>
+        </view>
+        <view class="add-time-btn" bindtap="addTimeSlot">
+          <text>+ 添加时间段</text>
+        </view>
+      </view>
+
+      <!-- Added Time Slots List -->
+      <view class="time-slots-list" wx:if="{{timeSlots.length > 0}}">
+        <block wx:for="{{timeSlots}}" wx:key="formatted">
+          <view class="time-slot-item">
+            <text class="slot-text">{{item.formatted}}</text>
+            <view class="delete-btn" catchtap="removeTimeSlot" data-index="{{index}}">删除</view>
+          </view>
+        </block>
+      </view>
+      <view class="empty-slots-tip" wx:else>
+        请添加至少一个活动时间段
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="label">活动地点 <text class="required">*</text></view>
+      <input class="input" placeholder="请输入活动地点" placeholder-class="placeholder" bindinput="handleInput" data-field="location" value="{{formData.location}}" />
+    </view>
+
+    <view class="form-group">
+      <view class="label">截止时间 <text class="required">*</text></view>
+      <view class="time-picker-group">
+        <picker mode="date" value="{{deadlineDate}}" bindchange="handleDeadlineDateChange">
+          <view class="picker-view date-picker {{!deadlineDate ? 'placeholder' : ''}}">
+            {{deadlineDate || '选择日期'}}
+          </view>
+        </picker>
+        <picker mode="time" value="{{deadlineTime}}" bindchange="handleDeadlineTimeChange">
+          <view class="picker-view time-picker {{!deadlineTime ? 'placeholder' : ''}}">
+            {{deadlineTime || '选择时间'}}
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="label">招募人数 <text class="required">*</text></view>
+      <input class="input" type="number" placeholder="请输入人数" placeholder-class="placeholder" bindinput="handleInput" data-field="quota" value="{{formData.quota}}" />
+    </view>
+
+    <view class="form-group">
+      <view class="label">活动介绍 <text class="required">*</text></view>
+      <textarea class="textarea" placeholder="请输入活动详细介绍..." placeholder-class="placeholder" bindinput="handleInput" data-field="introduction" value="{{formData.introduction}}" maxlength="500" />
+      <view class="word-count">{{formData.introduction.length || 0}}/500</view>
+    </view>
+
+    <block wx:if="{{formData.type === 'volunteer'}}">
+      <view class="form-group">
+        <view class="label">活动要求 <text class="required">*</text></view>
+        <textarea class="textarea" placeholder="请输入志愿者要求..." placeholder-class="placeholder" bindinput="handleInput" data-field="requirement" value="{{formData.requirement}}" maxlength="200" />
+      </view>
+    </block>
+
+    <block wx:if="{{formData.type === 'study'}}">
+      <view class="form-group">
+        <view class="label">活动须知 <text class="required">*</text></view>
+        <textarea class="textarea" placeholder="请输入研学活动须知..." placeholder-class="placeholder" bindinput="handleInput" data-field="notice" value="{{formData.notice}}" maxlength="200" />
+      </view>
+    </block>
+  </view>
+
+  <view class="footer-action">
+    <button class="submit-btn" hover-class="btn-hover" bindtap="submitForm">立即发布</button>
+  </view>
+</view>

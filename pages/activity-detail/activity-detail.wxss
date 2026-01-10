@@ -1,0 +1,330 @@
+/* pages/activity-detail/activity-detail.wxss */
+
+/* ---- 核心变量与基础设置 ---- */
+page {
+  --primary-color: #6C5CE7; /* 蓝紫色主调 */
+  --primary-light: #A29BFE;
+  --accent-color: #FD79A8; /* 粉色点缀 */
+  --text-main: #2D3436;
+  --text-sub: #636E72;
+  --bg-color: #F8F9FA;
+  --card-bg: #FFFFFF;
+  
+  background-color: var(--bg-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+  color: var(--text-main);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---- 头部区域 ---- */
+.header-section {
+  padding: 40rpx 30rpx;
+  background: var(--card-bg);
+  border-bottom-left-radius: 40rpx;
+  border-bottom-right-radius: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+  margin-bottom: 30rpx;
+}
+
+.header-tags {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.tag {
+  padding: 6rpx 20rpx;
+  border-radius: 30rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.status-tag {
+  background: rgba(108, 92, 231, 0.1);
+  color: var(--primary-color);
+}
+
+.category-tag {
+  background: #F0F3F4;
+  color: var(--text-sub);
+}
+
+.header-title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+/* ---- 内容卡片区域 ---- */
+.content-card {
+  padding: 0 30rpx;
+  /* z-index: 3; No overlap needed now */
+}
+
+/* 信息网格 (垂直布局) */
+.info-grid {
+  display: flex;
+  flex-direction: column; /* 垂直排列 */
+  background: var(--card-bg);
+  padding: 30rpx;
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06);
+  margin-bottom: 40rpx;
+}
+
+.info-item {
+  width: 100%;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.info-item:first-child {
+  padding-top: 0;
+}
+
+.line-divider {
+  display: none; /* 垂直布局不需要竖线分割 */
+}
+
+.info-text {
+  display: flex;
+  flex-direction: row; /* 标签和值水平排列 */
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #888;
+  width: 90rpx; /* 固定标签宽度 */
+  flex-shrink: 0;
+  margin-right: 20rpx;
+}
+
+.value {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 600;
+  flex: 1; /* 占据剩余空间 */
+  line-height: 1.5;
+  word-break: break-all; /* 防止长文本溢出 */
+}
+
+/* 详情板块 - 保持一致 */
+.detail-section {
+  background: var(--card-bg);
+  border-radius: 24rpx;
+  padding: 40rpx 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03);
+}
+
+.section-header {
+  border-left: 8rpx solid var(--primary-color);
+  padding-left: 20rpx;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.section-body {
+  font-size: 28rpx;
+  color: var(--text-sub);
+  line-height: 1.7;
+}
+
+.requirement-box {
+  background: #F0F3FF;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  border: 1rpx dashed var(--primary-light);
+}
+
+.notice-text {
+  color: #E17055;
+  font-size: 26rpx;
+  background: #FFF0EB;
+  display: block;
+  padding: 20rpx;
+  border-radius: 12rpx;
+}
+
+.bottom-spacer {
+  height: 140rpx;
+}
+
+/* ---- 底部悬浮栏 ---- */
+.bottom-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.98);
+  padding: 20rpx 30rpx; /* 减小左右padding给按钮更多空间 */
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -4rpx 16rpx rgba(0,0,0,0.04);
+  z-index: 100;
+  gap: 20rpx; /* 稍微减小间距 */
+}
+
+.share-btn {
+  width: 96rpx !important; /* 稍微加大一点，确保手指好点 */
+  height: 96rpx !important;
+  flex-shrink: 0;
+  border-radius: 50% !important;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: 1rpx solid #E0E0E0;
+  box-sizing: border-box; /* 确保边框在内 */
+  line-height: 1;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.share-icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.signup-btn {
+  flex: 1; /* 拉伸占满剩余空间 */
+  height: 96rpx; /* 与分享按钮同高 */
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: 48rpx; /* 半圆角 */
+  font-size: 34rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 20rpx rgba(108, 92, 231, 0.4);
+  transition: all 0.2s ease;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.btn-disabled {
+  background: #ccc !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+.signup-btn:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+/* ����������ʽ */
+.share-modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.share-modal-content {
+  background: #F7F7F7;
+  border-top-left-radius: 24rpx;
+  border-top-right-radius: 24rpx;
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.share-options {
+  display: flex;
+  padding: 40rpx 20rpx;
+  background: #FFFFFF;
+}
+
+.share-option-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  line-height: 1.5;
+  border: none;
+}
+
+.share-option-btn::after {
+  border: none;
+}
+
+.share-btn-icon {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wechat-icon {
+  background: #F2F2F2;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-img {
+  width: 50rpx;
+  height: 50rpx;
+}
+
+/* .wechat-icon::before removed */
+
+.link-icon {
+  background: #F2F2F2;
+  position: relative;
+}
+
+.link-icon::before {
+  content: '';
+  width: 44rpx;
+  height: 44rpx;
+  background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23666666%22%3E%3Cpath%20d%3D%22M3.9%2012c0-1.7%201.4-3.1%203.1-3.1h4V7H7c-2.8%200-5%202.2-5%205s2.2%205%205%205h4v-1.9H7c-1.7%200-3.1-1.4-3.1-3.1zM8%2013h8v-2H8v2zm9-6h-4v1.9h4c1.7%200%203.1%201.4%203.1%203.1s-1.4%203.1-3.1%203.1h-4V17h4c2.8%200%205-2.2%205-5s-2.2-5-5-5z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.share-cancel-btn {
+  background: #FFFFFF;
+  margin-top: 16rpx;
+  padding: 30rpx;
+  text-align: center;
+  font-size: 32rpx;
+  color: #333;
+}
+

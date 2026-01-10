@@ -1,0 +1,50 @@
+<!-- pages/admin-volunteer/admin-volunteer.wxml -->
+<view class="page-container">
+  <!-- 顶部 Tabs -->
+  <view class="tabs">
+    <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-index="0">
+      志愿者报名
+    </view>
+    <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-index="1">
+      研学报名
+    </view>
+  </view>
+
+  <!-- 列表内容 -->
+  <scroll-view scroll-y class="content-scroll" refresher-enabled bindrefresherrefresh="onRefresh" refresher-triggered="{{isRefreshing}}">
+    <view class="activity-list">
+      <block wx:for="{{currentTab === 0 ? volunteerList : studyList}}" wx:key="_id">
+        <view class="activity-card" bindtap="goToDetail" data-id="{{item._id}}" data-title="{{item.title}}">
+          <!-- 右上角红点 (待审核数量，示例逻辑) -->
+          <view class="badge" wx:if="{{item.pendingCount > 0}}">{{item.pendingCount}}</view>
+          
+          <view class="card-header">
+            <text class="activity-title">{{item.title}}</text>
+            <text class="status-tag {{item.status === '招募中' ? 'status-active' : 'status-end'}}">{{item.status}}</text>
+          </view>
+          
+          <view class="card-body">
+            <view class="info-row">
+              <text class="info-text">报名人数 {{item.current_count || 0}}/{{item.quota}}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-text">截止日期：{{item.deadline || '长期有效'}}</text>
+            </view>
+          </view>
+          
+          <view class="card-arrow">
+            <text class="arrow-icon">></text>
+          </view>
+        </view>
+      </block>
+      
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{(currentTab === 0 ? volunteerList.length : studyList.length) === 0}}">
+        <text>暂无活动</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 手动引入 TabBar (因为此页面不在 app.json tabBar 列表中) -->
+  <custom-tab-bar selected="{{1}}"></custom-tab-bar>
+</view>

@@ -1,0 +1,34 @@
+<custom-loading show="{{loading}}" />
+<view class="page-container">
+  <view class="header-title">{{title}}</view>
+  
+  <block wx:if="{{list.length === 0}}">
+    <view class="empty-state">
+      <text>暂无发布的活动</text>
+    </view>
+  </block>
+  
+  <block wx:else>
+    <view class="list-container">
+      <block wx:for="{{list}}" wx:key="id">
+        <view class="activity-card" bindtap="goToEdit" data-id="{{item.id}}">
+          <view class="card-header">
+            <text class="card-title">{{item.title}}</text>
+            <view class="status-tag {{item.status === 'ended' ? 'status-ended' : 'status-active'}}">
+              {{item.status === 'ended' ? '已结束' : '招募中'}}
+            </view>
+          </view>
+          <view class="card-body">
+            <view class="info-row">分类: {{item.category}}</view>
+            <view class="info-row">时间: {{item.time}}</view>
+            <view class="info-row">截止: {{item.deadline}}</view>
+          </view>
+          <view class="card-footer">
+            <text class="edit-hint">点击编辑</text>
+            <view class="delete-btn" catchtap="deleteActivity" data-id="{{item.id}}">删除</view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </block>
+</view>

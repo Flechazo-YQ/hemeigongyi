@@ -1,0 +1,6 @@
+<view class="loading-mask" wx:if="{{show}}">
+  <view class="loading-box">
+    <image class="loading-icon" src="/images/loading.svg" mode="aspectFit"></image>
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>

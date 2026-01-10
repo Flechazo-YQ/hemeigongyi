@@ -1,0 +1,121 @@
+<!-- 个人中心页面 -->
+<view class="profile-container">
+  <!-- 根据登录状态显示不同内容 -->
+  <block wx:if="{{isLogin}}">
+    <!-- 顶部用户信息区域 -->
+    <view class="user-card-section">
+      <image 
+        wx:if="{{userType === 'admin'}}" 
+        class="admin-toggle-btn" 
+        src="/images/change_admin_user.svg" 
+        bindtap="toggleAdminView"
+      ></image>
+      <view class="user-info-card" bindtap="handleEditProfile">
+        <view class="avatar-wrapper">
+          <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.svg'}}" mode="aspectFill"></image>
+        </view>
+        
+        <view class="info-section">
+          <view class="name-row">
+            <text class="nickname-text">{{userInfo.nickName || '微信用户'}}</text>
+            <view class="user-type-badge {{userType === 'admin' ? 'badge-admin' : 'badge-user'}}">
+              {{userType === 'admin' ? '管理员' : '普通用户'}}
+            </view>
+          </view>
+          <text class="edit-hint {{!isProfileComplete ? 'incomplete' : ''}}">{{!isProfileComplete ? '点击完善个人信息' : '点击编辑个人资料'}}</text>
+        </view>
+
+        <view class="arrow-icon">></view>
+      </view>
+    </view>
+
+    <view class="content-body">
+      <view class="menu-card">
+        <!-- 管理员功能 -->
+        <block wx:if="{{userType === 'admin' && isAdminView}}">
+          <view class="menu-group-title">管理功能</view>
+
+          <view class="menu-item" bindtap="goToPublishVolunteer">
+            <view class="menu-left">
+              <view class="menu-icon-box icon-publish-vol"></view>
+              <text class="menu-text">发布志愿活动</text>
+            </view>
+            <text class="arrow">></text>
+          </view>
+          
+          <view class="menu-item" bindtap="goToPublishStudy">
+            <view class="menu-left">
+              <view class="menu-icon-box icon-publish-study"></view>
+              <text class="menu-text">发布研学活动</text>
+            </view>
+            <text class="arrow">></text>
+          </view>
+          
+
+          <view class="menu-item" bindtap="goToVolunteerSummary">
+            <view class="menu-left">
+              <view class="menu-icon-box icon-list-vol"></view>
+              <text class="menu-text">志愿活动汇总</text>
+            </view>
+            <text class="arrow">></text>
+          </view>
+          
+          <view class="menu-item" bindtap="goToStudySummary">
+            <view class="menu-left">
+              <view class="menu-icon-box icon-list-study"></view>
+              <text class="menu-text">研学路线汇总</text>
+            </view>
+            <text class="arrow">></text>
+          </view>
+
+          <view class="menu-item" bindtap="goToBannerSettings">
+            <view class="menu-left">
+              <view class="menu-icon-box icon-banner-settings">🖼️</view>
+              <text class="menu-text">往期精彩设置</text>
+            </view>
+            <text class="arrow">></text>
+          </view>
+        </block>
+        
+
+      </view>
+
+      <button class="logout-btn" bindtap="handleLogout">退出登录</button>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="login-prompt">
+      <image class="logo" src="/images/default-avatar.svg" mode="aspectFit"></image>
+      <view class="prompt-title">欢迎来到青椒童行</view>
+      <view class="prompt-desc">登录后开启精彩研学之旅</view>
+      <button class="login-btn-green" bindtap="handleLogin">
+        <image src="/images/wechat-logo.svg" class="btn-icon"></image>
+        微信一键登录
+      </button>
+    </view>
+  </block>
+
+  <!-- 完善信息弹窗 -->
+  <view class="login-modal" wx:if="{{showLoginModal}}">
+    <view class="modal-content">
+      <view class="modal-header">请完善个人信息</view>
+      <view class="modal-body">
+        <button class="avatar-wrapper" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+          <image class="avatar-preview" src="{{tempUserInfo.avatarUrl || '/images/default-avatar.svg'}}" mode="aspectFill"></image>
+          <view class="camera-badge">
+            <view class="camera-icon"></view>
+          </view>
+        </button>
+        
+        <view class="input-container">
+          <view class="label">真实姓名</view>
+          <input type="nickname" class="name-input" placeholder="请输入真实姓名" placeholder-class="input-placeholder" value="{{tempUserInfo.nickName}}" bindinput="onNameInput" />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="submit-btn" bindtap="submitLogin">提交</button>
+      </view>
+    </view>
+  </view>
+</view>

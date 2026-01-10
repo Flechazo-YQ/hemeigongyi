@@ -1,0 +1,86 @@
+<!--signup.wxml-->
+<view class="container">
+  <!-- 头部区域：展示活动名称 -->
+  <view class="header-section">
+
+    <text class="header-title">{{activity_title || '志愿者活动报名'}}</text>
+  </view>
+
+  <view class="form-section">
+    <!-- 个人信息组 -->
+    <view class="form-group">
+      <view class="form-item">
+        <text class="label required">姓名</text>
+        <view class="input-area">
+          <input class="input" placeholder="请输入您的真实姓名" placeholder-class="placeholder" value="{{name}}" bindinput="inputName" />
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="label required">性别</text>
+        <view class="input-area">
+          <picker bindchange="bindGenderChange" value="{{genderIndex}}" range="{{genders}}">
+            <view class="picker {{genderIndex === null ? 'empty' : ''}}">
+              {{genderIndex !== null ? genders[genderIndex] : '请选择性别'}}
+            </view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="label required">手机号</text>
+        <view class="input-area">
+          <input class="input" placeholder="请输入11位手机号码" type="number" maxlength="11" placeholder-class="placeholder" value="{{phone}}" bindinput="inputPhone" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 学校信息组 -->
+    <view class="form-group">
+      <view class="form-item">
+        <text class="label required">学院</text>
+        <view class="input-area">
+          <input class="input" placeholder="例如：信息工程学院" placeholder-class="placeholder" value="{{college}}" bindinput="inputCollege" />
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="label required">专业班级</text>
+        <view class="input-area">
+          <input class="input" placeholder="例如：计科2101" placeholder-class="placeholder" value="{{major}}" bindinput="inputMajor" />
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="label required">学号</text>
+        <view class="input-area">
+          <input class="input" placeholder="请输入您的学号" type="number" placeholder-class="placeholder" value="{{student_id}}" bindinput="inputStudentId" />
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="label required">政治面貌</text>
+        <view class="input-area">
+          <picker bindchange="bindPoliticsChange" value="{{politicsIndex}}" range="{{politics}}">
+            <view class="picker {{politicsIndex === null ? 'empty' : ''}}">
+              {{politicsIndex !== null ? politics[politicsIndex] : '请选择'}}
+            </view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <!-- 特长备注 -->
+    <view class="form-group-vertical">
+      <text class="label-vertical">个人特长 / 备注信息</text>
+      <view class="textarea-wrapper">
+        <textarea class="textarea" placeholder="请简要描述您的相关特长或经历（选填）" placeholder-class="placeholder" value="{{skills}}" bindinput="inputSkills" maxlength="500" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部悬浮按钮 -->
+  <view class="bottom-bar">
+    <button class="submit-btn" bindtap="submitSignup">立即提交报名</button>
+  </view>
+</view>

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "所有活动",
+  "usingComponents": {
+    "custom-loading": "/components/custom-loading/custom-loading",
+    "empty-placeholder": "/components/empty-placeholder/empty-placeholder"
+  }
+}

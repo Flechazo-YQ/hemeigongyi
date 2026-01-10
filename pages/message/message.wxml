@@ -1,0 +1,34 @@
+<view class="page-container">
+  <custom-loading show="{{loading}}" />
+  
+  <block wx:if="{{!loading && list.length > 0}}">
+    <view class="message-list">
+      <view class="message-card" wx:for="{{list}}" wx:key="_id">
+        <view class="card-header">
+          <view class="header-left">
+            <text class="tag {{item.type === 'volunteer' ? 'tag-volunteer' : 'tag-study'}}">{{item.type === 'volunteer' ? '志愿' : '研学'}}</text>
+            <text class="time">{{item.createTimeStr}}</text>
+          </view>
+          <view class="status-badge {{item.statusClass}}">
+            {{item.statusText}}
+          </view>
+        </view>
+        
+        <view class="card-content">
+          <text class="activity-title">{{item.displayTitle}}</text>
+          <text class="sub-info" wx:if="{{item.type === 'volunteer'}}">报名人: {{item.volunteerName}}</text>
+          <text class="sub-info" wx:else>报名人: {{item.child_name}}</text>
+        </view>
+
+        <view class="card-footer" wx:if="{{item.status === '已拒绝' || item.status === 'rejected' || item.audit_reason}}">
+          <text class="reject-reason" user-select wx:if="{{item.audit_reason}}">审核意见: {{item.audit_reason}}</text>
+          <text class="reject-reason" wx:else>如有疑问请联系管理员</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:if="{{!loading && list.length === 0}}">
+    <empty-placeholder show="{{true}}" text="暂无报名记录" />
+  </block>
+</view>

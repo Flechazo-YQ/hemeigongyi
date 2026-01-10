@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "往期精彩设置",
+  "usingComponents": {
+    "custom-loading": "/components/custom-loading/custom-loading"
+  }
+}

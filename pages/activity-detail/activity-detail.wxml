@@ -1,0 +1,103 @@
+<custom-loading show="{{loading}}" />
+
+<!-- 顶部标题区域 -->
+<view class="header-section">
+  <view class="header-tags">
+    <text class="tag status-tag">正在报名</text>
+    <text class="tag category-tag">{{activity.category || '研学活动'}}</text>
+  </view>
+  <text class="header-title">{{activity.title}}</text>
+</view>
+
+<!-- 内容卡片区域 -->
+<view class="content-card">
+  <!-- 基本信息网格 (无 emoji) -->
+  <view class="info-grid">
+    <view class="info-item">
+      <view class="info-text">
+        <text class="label">时间</text>
+        <text class="value">{{activity.time || activity.start_date || '待定'}}</text>
+      </view>
+    </view>
+    <view class="info-item">
+      <view class="info-text">
+        <text class="label">地点</text>
+        <text class="value">{{activity.location || activity.place || '待定'}}</text>
+      </view>
+    </view>
+    <view class="info-item">
+      <view class="info-text">
+        <text class="label">名额</text>
+        <text class="value">{{activity.volunteer_count || activity.current_count || 0}}/{{activity.volunteer_quota || activity.quota || '不限'}}人</text>
+      </view>
+    </view>
+    <view class="info-item">
+      <view class="info-text">
+        <text class="label">截止</text>
+        <text class="value">{{activity.deadline || '活动结束前'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 详情内容板块 -->
+  <view class="detail-section">
+    <view class="section-header">
+      <text class="section-title">活动介绍</text>
+    </view>
+    <view class="section-body">
+      <text class="body-text">{{activity.content || activity.description || '暂无详细介绍...'}}</text>
+    </view>
+  </view>
+
+  <view class="detail-section">
+    <view class="section-header">
+      <text class="section-title">岗位要求</text>
+    </view>
+    <view class="section-body">
+      <view class="requirement-box">
+        <text class="body-text">{{activity.requirement || '无特殊要求'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="detail-section">
+    <view class="section-header">
+      <text class="section-title">报名须知</text>
+    </view>
+    <view class="section-body">
+      <text class="notice-text">{{activity.notice || '请准时参加，注意安全。'}}</text>
+    </view>
+  </view>
+  
+  <!-- 底部占位 -->
+  <view class="bottom-spacer"></view>
+</view>
+
+<!-- 底部悬浮操作栏 -->
+<view class="bottom-action-bar safe-area-bottom">
+  <button class="share-btn" bindtap="showShareModal">
+    <image class="share-icon" src="./sharing.svg"></image>
+  </button>
+  <button class="signup-btn {{activity.status === 'ended' ? 'btn-disabled' : ''}}" bindtap="onSignup" disabled="{{activity.status === 'ended'}}">
+    {{activity.status === 'ended' ? '已截止' : '立即报名'}}
+  </button>
+</view>
+
+<!-- 分享弹窗 -->
+<view class="share-modal-mask" wx:if="{{showShareModal}}" bindtap="closeShareModal">
+  <view class="share-modal-content" catchtap="preventBubble">
+    <view class="share-options">
+      <button class="share-option-btn" open-type="share">
+        <view class="share-btn-icon wechat-icon">
+          <image src="/images/wechat.svg" class="icon-img"></image>
+        </view>
+        <text>分享给好友</text>
+      </button>
+      <view class="share-option-btn" bindtap="copyLink">
+        <view class="share-btn-icon link-icon"></view>
+        <text>复制链接</text>
+      </view>
+    </view>
+    <view class="share-cancel-btn" bindtap="closeShareModal">取消</view>
+  </view>
+</view>

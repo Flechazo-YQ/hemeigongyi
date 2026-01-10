@@ -1,0 +1,14 @@
+node_modules/
+miniprogram_npm/
+unpackage/
+dist/
+.DS_Store
+.idea/
+.vscode/
+project.private.config.json
+sitemap.json
+cloudfunctions/**/node_modules/
+.python-version
+__pycache__/
+*.pyc
+.venv/

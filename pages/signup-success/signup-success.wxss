@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100rpx;
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+.icon-box {
+  margin-bottom: 40rpx;
+}
+
+.title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30rpx;
+}
+
+.desc {
+  font-size: 30rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  text-align: center;
+}
+
+.btn-area {
+  margin-top: 80rpx;
+  width: 80%;
+}
+
+.btn-primary {
+  background-color: #07c160;
+  color: #fff;
+  margin-bottom: 30rpx;
+  border-radius: 44rpx;
+}
+
+.btn-default {
+  background-color: #f2f2f2;
+  color: #333;
+  border-radius: 44rpx;
+}

@@ -1,0 +1,346 @@
+/* AI研学页面样式 */
+.ai-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #dddfe0 0%, #dddfe0 100%);
+  box-sizing: border-box;
+}
+
+
+/* 聊天容器 */
+.chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.9);
+  margin: 0; /* Remove margin to fit full screen better if needed, or keep small margin */
+  border-radius: 0; /* Maybe full width? User didn't specify, but "AI研学规划师" moved to top nav bar suggests a cleaner look */
+  overflow: hidden;
+  box-shadow: none; /* Remove shadow for cleaner look */
+}
+
+/* 聊天消息区域 */
+.chat-messages {
+  flex: 1;
+  padding: 20rpx 40rpx; /* 增加左右间距 */
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.message-item {
+  display: flex;
+  gap: 15rpx;
+  max-width: 80%;
+}
+
+.message-item.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.message-item.assistant {
+  align-self: flex-start;
+}
+
+
+
+.avatar-text {
+  font-size: 28rpx;
+  color: white;
+}
+
+.message-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.message-text {
+  padding: 20rpx;
+  border-radius: 20rpx;
+  background: white;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  font-size: 28rpx;
+  line-height: 1.5;
+  color: #333;
+  word-wrap: break-word;
+}
+
+.message-item.user .message-text {
+  background: #ffffff; 
+  color: #000000; /* 黑字 */
+  border: 1px solid #f0f0f0; /* 微微的边框增加层次感 */
+}
+
+/* ... existing code ... */
+
+/* 输入区域 */
+.input-container {
+  background: white;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  transition: padding-bottom 0.2s ease-out;
+}
+
+.input-wrapper {
+  display: flex;
+  gap: 15rpx;
+  padding: 20rpx;
+  align-items: center;
+}
+
+.message-input {
+  flex: 8; /* 占据 8 份宽度 */
+  padding: 15rpx 25rpx;
+  border: 1px solid #e0e0e0;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+  background: #f8f9fa; /* 恢复原来的背景色 */
+  color: #333; /* 恢复原来的文字颜色 */
+  height: 70rpx; /* Fixed height for better alignment */
+  box-sizing: border-box;
+}
+
+.message-input:focus {
+  border-color: #333;
+  background: white;
+}
+
+.send-btn {
+  flex: 1; /* 占据 1 份宽度 */
+  padding: 0; /* 移除内边距以适应小宽度 */
+  height: 70rpx; /* Match input height */
+  line-height: 70rpx;
+  background: #000000; /* Black background */
+  color: white;
+  border: none;
+  border-radius: 35rpx;
+  font-size: 28rpx; /* 恢复文字大小 */
+  font-weight: bold;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0; /* 允许按钮变得很窄 */
+}
+
+.send-btn:disabled {
+  background: #ccc;
+  opacity: 0.6;
+}
+
+
+.send-btn.loading {
+  background: #999;
+}
+
+.loading-text {
+  opacity: 0.8;
+}
+
+/* 弹窗样式 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 600rpx;
+  max-height: 80vh;
+  background: white;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 40rpx;
+  padding: 0;
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 路线详情样式 */
+.route-details {
+  width: 95%;
+  max-width: 700rpx;
+}
+
+.route-content {
+  padding: 30rpx;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.route-info {
+  margin-bottom: 30rpx;
+}
+
+.info-item {
+  display: flex;
+  margin-bottom: 15rpx;
+}
+
+.info-label {
+  font-size: 28rpx;
+  color: #666;
+  width: 120rpx;
+  flex-shrink: 0;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.section-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin: 30rpx 0 20rpx;
+  border-left: 6rpx solid #667eea;
+  padding-left: 20rpx;
+}
+
+.route-schedule {
+  margin-bottom: 30rpx;
+}
+
+.schedule-item {
+  background: #f8f9fa;
+  border-radius: 15rpx;
+  padding: 20rpx;
+  margin-bottom: 15rpx;
+}
+
+.schedule-time {
+  display: block;
+  font-size: 26rpx;
+  color: #667eea;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.schedule-activities {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.activity {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.description {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.activity-tag {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  margin-right: 10rpx;
+  margin-bottom: 5rpx;
+}
+
+.route-highlights {
+  margin-bottom: 30rpx;
+}
+
+.highlights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.highlight-item {
+  font-size: 26rpx;
+  color: #333;
+  line-height: 1.5;
+}
+
+.route-tips {
+  margin-bottom: 30rpx;
+}
+
+.tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.tip-item {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 20rpx;
+  padding: 30rpx;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-close {
+  flex: 1;
+  padding: 20rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  transition: all 0.3s;
+}
+
+
+
+
+
+
+
+ 

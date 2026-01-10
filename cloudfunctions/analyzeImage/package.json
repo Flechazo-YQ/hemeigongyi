@@ -1,0 +1,12 @@
+{
+  "name": "analyzeImage",
+  "version": "1.0.0",
+  "description": "Image analysis using Multimodal AI",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "wx-server-sdk": "latest",
+    "axios": "^1.0.0"
+  }
+}

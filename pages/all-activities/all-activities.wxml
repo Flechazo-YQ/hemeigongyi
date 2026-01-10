@@ -1,0 +1,30 @@
+<view class="page-container">
+  <view class="tabs">
+    <view class="tab-item {{activeTab === 'volunteer' ? 'active' : ''}}" bindtap="switchTab" data-type="volunteer">志愿者活动</view>
+    <view class="tab-item {{activeTab === 'study' ? 'active' : ''}}" bindtap="switchTab" data-type="study">研学活动</view>
+  </view>
+
+  <scroll-view scroll-y class="list-container">
+    <custom-loading show="{{loading}}" />
+    
+    <block wx:if="{{!loading && list.length > 0}}">
+      <view class="activity-card {{item.status === 'ended' ? 'card-disabled' : ''}}" wx:for="{{list}}" wx:key="_id" bindtap="goToDetail" data-id="{{item._id}}">
+        <view class="card-header">
+          <text class="card-title">{{item.title}}</text>
+          <text class="status-tag {{item.status === 'ended' ? 'status-ended' : 'status-active'}}">{{item.status === 'ended' ? '已结束' : '招募中'}}</text>
+        </view>
+        <view class="card-body">
+          <view class="info-row">时间: {{item.start_date || item.time}}</view>
+          <view class="info-row">地点: {{item.location || item.place || '待定'}}</view>
+        </view>
+        <view class="card-footer">
+          <text class="arrow-right">></text>
+        </view>
+      </view>
+    </block>
+    
+    <block wx:if="{{!loading && list.length === 0}}">
+      <empty-placeholder show="{{true}}" text="暂无活动" />
+    </block>
+  </scroll-view>
+</view>

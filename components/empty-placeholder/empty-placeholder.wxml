@@ -1,0 +1,5 @@
+<!--components/empty-placeholder/empty-placeholder.wxml-->
+<view class="placeholder-container">
+  <image class="placeholder-image" src="/images/empty-box.svg" mode="aspectFit"></image>
+  <text class="placeholder-text">{{text}}</text>
+</view>

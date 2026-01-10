@@ -1,0 +1,22 @@
+<!-- webview.wxml -->
+<view class="webview-container">
+  <!-- 正常显示web-view -->
+  <web-view wx:if="{{!loadError}}" src="{{url}}" binderror="onWebViewError" bindload="onWebViewLoad"></web-view>
+  
+  <!-- 错误提示界面 -->
+  <view wx:if="{{loadError}}" class="error-container">
+    <view class="error-icon">⚠️</view>
+    <view class="error-title">网页无法打开</view>
+    <view class="error-message">{{errorMessage}}</view>
+    
+    <view class="action-buttons">
+      <button class="retry-btn" bindtap="retryLoad">重试</button>
+      <button class="copy-btn" bindtap="copyLink">复制链接</button>
+      <button class="browser-btn" bindtap="openInBrowser">浏览器打开</button>
+    </view>
+    
+    <view class="tips">
+      <text>提示：您可以复制链接后在浏览器中打开</text>
+    </view>
+  </view>
+</view> 

@@ -1,0 +1,76 @@
+/* webview.wxss */
+page {
+  height: 100%;
+}
+
+.webview-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 错误提示界面样式 */
+.error-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40rpx;
+  background-color: #f8f9fa;
+}
+
+.error-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+}
+
+.error-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.error-message {
+  font-size: 28rpx;
+  color: #666;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 40rpx;
+  white-space: pre-line;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 40rpx;
+}
+
+.retry-btn, .copy-btn, .browser-btn {
+  padding: 20rpx 40rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+.retry-btn {
+  background-color: #007aff;
+  color: white;
+}
+
+.copy-btn {
+  background-color: #34c759;
+  color: white;
+}
+
+.browser-btn {
+  background-color: #ff9500;
+  color: white;
+}
+
+.tips {
+  font-size: 24rpx;
+  color: #999;
+  text-align: center;
+} 

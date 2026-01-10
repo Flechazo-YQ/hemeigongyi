@@ -1,0 +1,98 @@
+<scroll-view scroll-y="true" style="height: 100vh;">
+<!-- 顶部轮播图 -->
+<view class="section-header">|| 往期精彩</view>
+<swiper class="banner-swiper" indicator-dots="true" autoplay="true" interval="5000" duration="500">
+  <block wx:for="{{banners}}" wx:key="url">
+    <swiper-item>
+      <image src="{{item.url}}" mode="aspectFill" class="slide-image" bindtap="onBannerTap" data-link="{{item.link}}"></image>
+    </swiper-item>
+  </block>
+</swiper>
+
+<!-- 活动报名入口 -->
+<view class="section-header-row">
+  <view class="section-header">|| 活动报名</view>
+  <view class="more-link" bindtap="goToAllActivities">查看更多 ></view>
+</view>
+<view class="entry-buttons">
+  <view class="entry-btn volunteer-btn {{activeTab === 'volunteer' ? 'active' : ''}}" bindtap="onVolunteerTap">志愿者报名</view>
+  <view class="entry-btn study-btn {{activeTab === 'study' ? 'active' : ''}}" bindtap="onStudyTap">研学报名</view>
+</view>
+
+<!-- 搜索和筛选 -->
+<view class="search-filter-bar">
+  <view class="search-box">
+    <input class="search-input" placeholder="搜索活动" bindinput="onSearchInput" />
+    <view class="search-icon">🔍</view>
+  </view>
+  <picker bindchange="onCategoryChange" value="{{categoryIndex}}" range="{{categories}}">
+    <view class="filter-dropdown">
+      <text>{{categories[categoryIndex]}}</text>
+      <text class="arrow-down">∨</text>
+    </view>
+  </picker>
+</view>
+
+<!-- 路线/活动列表 -->
+<view class="route-list">
+  <custom-loading show="{{loading}}" />
+  
+  <!-- 无数据状态 -->
+  <view wx:if="{{!loading && filteredRoutes.length === 0}}" class="no-data">
+    <text>当前暂无活动</text>
+  </view>
+  
+  <!-- 列表项 -->
+  <view wx:else>
+    <view wx:for="{{filteredRoutes}}" wx:key="_id" class="activity-card" bindtap="goToDetail" data-id="{{item._id || item.id}}">
+      <view class="card-header">
+        <text class="card-title">{{item.title}}</text>
+        <text class="card-category">分类: {{item.category}}</text>
+      </view>
+      <view class="card-body">
+        <view class="info-row">时间: {{item.start_date || item.time}}</view>
+        <view class="info-row">地点: {{item.location || item.place || '待定'}}</view>
+        <view class="info-row">人数: {{item.current_count || 0}}/{{item.quota}}</view>
+      </view>
+      <view class="card-footer">
+        <text class="arrow-right">></text>
+      </view>
+    </view>
+  </view>
+</view>
+
+  <view style="height: 150rpx;"></view>
+</scroll-view>
+
+<!-- 报名弹窗 (保留原有逻辑，但可能需要调整触发方式) -->
+<view wx:if="{{showSignup}}" class="signup-modal">
+  <view class="modal-content">
+    <view class="modal-title">报名</view>
+    <form bindsubmit="submitSignup">
+      <view class="form-item">
+        <text class="form-label">孩子姓名：</text>
+        <input class="form-input" name="childName" placeholder="请输入孩子姓名" value="{{signupForm.childName}}" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">性别：</text>
+        <radio-group class="form-radio-group" name="childGender">
+          <label><radio value="男" checked="{{signupForm.childGender === '男'}}"/>男</label>
+          <label><radio value="女" checked="{{signupForm.childGender === '女'}}"/>女</label>
+        </radio-group>
+      </view>
+      <view class="form-item">
+        <text class="form-label">年龄：</text>
+        <input class="form-input" name="childAge" type="number" placeholder="请输入年龄" value="{{signupForm.childAge}}" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">家长手机：</text>
+        <input class="form-input" name="parentPhone" type="number" placeholder="请输入手机号" value="{{signupForm.parentPhone}}" />
+      </view>
+      <view class="form-actions">
+        <button class="submit-btn" form-type="submit">提交报名</button>
+        <button class="cancel-btn" bindtap="closeSignup">取消</button>
+      </view>
+    </form>
+  </view>
+</view>
+

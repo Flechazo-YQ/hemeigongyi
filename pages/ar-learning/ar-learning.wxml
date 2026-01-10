@@ -1,0 +1,94 @@
+<!-- pages/ar-learning/ar-learning.wxml -->
+<view class="page-container">
+  
+  <!-- 相机区域 (80%高度) -->
+  <view class="camera-section">
+    
+    <!-- 相机组件 -->
+    <camera 
+      wx:if="{{cameraActive}}"
+      device-position="{{cameraPosition}}"
+      flash="off"
+      class="fullscreen-camera"
+      binderror="cameraError"
+      bindscancode="scanCode">
+    </camera>
+
+    <!-- 启动页/占位符 (相机未激活时显示) -->
+    <view wx:else class="camera-placeholder">
+      <view class="placeholder-content">
+        <view class="placeholder-icon">📷</view>
+        <view class="placeholder-text">AR智能识图</view>
+        <button class="start-btn" bindtap="startCamera">打开摄像头</button>
+      </view>
+    </view>
+
+    <!-- 拍照快照预览 (覆盖在相机上) -->
+    <image wx:if="{{showSnapshot}}" src="{{snapshotPath}}" class="snapshot-overlay" mode="aspectFill" />
+    
+    <!-- 快照操作按钮 (仅在有快照时显示在相机区域内) -->
+    <view wx:if="{{showSnapshot}}" class="snapshot-controls">
+      <button class="control-btn retake-btn" bindtap="clearSnapshot">重拍</button>
+    </view>
+
+  </view>
+
+  <!-- 底部控制栏 (20%高度) -->
+  <view class="control-bar">
+    <!-- 拍照按钮 (居中) -->
+    <view class="shutter-button-outer" bindtap="takePhoto">
+      <view class="shutter-button-inner"></view>
+    </view>
+    
+    <!-- 翻转摄像头按钮 (右下角) -->
+    <view class="flip-btn" bindtap="flipCamera" wx:if="{{cameraActive}}">
+      <image class="flip-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIzIDR2NmgtNiI+PC9wYXRoPjxwYXRoIGQ9Ik0yMC40OSAxNWE5IDkgMCAxIDEtMi4xMi05LjM2TDIzIDEwIj48L3BhdGg+PC9zdmc+" />
+    </view>
+  </view>
+
+  <!-- 识别结果区域 (在下方，需滚动查看) -->
+  <view class="result-section" wx:if="{{resultVisible}}" id="result-section">
+    <view class="result-header">
+      <text class="result-title">识别结果</text>
+    </view>
+    
+    <view class="recognition-result">
+      <view class="result-item">
+        <text class="label">识别内容</text>
+        <text class="value primary">{{resultKeyword}}</text>
+      </view>
+      
+      <view class="result-item">
+        <text class="label">置信度</text>
+        <view class="confidence-wrapper">
+          <progress percent="{{resultScore}}" stroke-width="6" activeColor="#000000" backgroundColor="#f0f0f0" border-radius="3" />
+          <text class="value">{{resultScore}}%</text>
+        </view>
+      </view>
+      
+      <view class="result-item" wx:if="{{resultRoot}}">
+        <text class="label">分类</text>
+        <text class="value">{{resultRoot}}</text>
+      </view>
+      
+      <view class="result-item description" wx:if="{{resultDesc}}">
+        <text class="label">百科描述</text>
+        <text class="value desc-text">{{resultDesc}}</text>
+      </view>
+    </view>
+
+    <!-- 更多结果 -->
+    <view wx:if="{{allResults.length > 1}}" class="more-results">
+      <view class="more-header">
+        <text>其他可能结果</text>
+      </view>
+      <view class="result-list">
+        <view wx:for="{{allResults}}" wx:key="index" wx:if="{{index > 0}}" class="result-item-small">
+          <text class="small-keyword">{{item.keyword}}</text>
+          <text class="small-score">{{item.scorePercent}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+</view> 

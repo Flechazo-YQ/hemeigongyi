@@ -1,0 +1,34 @@
+<!-- AI研学页面 -->
+<!-- AI研学页面 -->
+<view class="ai-container">
+  <!-- 聊天区域 -->
+  <view class="chat-container">
+    <scroll-view class="chat-messages" scroll-y="true" scroll-into-view="{{scrollToMessage}}">
+      <view class="message-list">
+        <view wx:for="{{chatHistory}}" wx:key="index" id="msg-{{index}}" class="message-item {{item.role}}">
+          <view class="message-content">
+            <view class="message-text">{{item.content}}</view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 输入区域 -->
+    <view class="input-container" style="padding-bottom: {{keyboardHeight > 0 ? keyboardHeight + 'px' : 'calc(120rpx + env(safe-area-inset-bottom))'}}">
+      <view class="input-wrapper">
+        <input class="message-input" 
+               placeholder="{{placeholderText}}" 
+               value="{{chatMessage}}"
+               adjust-position="{{false}}"
+               bindinput="onChatInput"
+               bindfocus="onFocus"
+               bindblur="onBlur"
+               bindkeyboardheightchange="onKeyboardHeightChange" />
+        <button class="send-btn" 
+                bindtap="sendChatMessage">
+          <text>发送</text>
+        </button>
+      </view>
+    </view>
+  </view>
+</view> 

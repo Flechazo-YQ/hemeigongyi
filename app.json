@@ -1,0 +1,65 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/activity-detail/activity-detail",
+    "pages/signup/signup",
+    "pages/ar-learning/ar-learning",
+    "pages/ai-research/ai-research",
+    "pages/profile/profile",
+    "pages/profile-edit/profile-edit",
+    "pages/admin-volunteer/admin-volunteer",
+    "pages/admin-publish/admin-publish",
+    "pages/admin-activity-list/admin-activity-list",
+    "pages/admin-activity-registrations/admin-activity-registrations",
+    "pages/all-activities/all-activities",
+    "pages/message/message",
+    "pages/signup-success/signup-success",
+    "pages/webview/webview",
+    "pages/admin-banners/admin-banners"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "青椒童行研学",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#7A7E83",
+    "selectedColor": "#007aff",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/ar-learning/ar-learning",
+        "text": "AR伴学"
+      },
+      {
+        "pagePath": "pages/message/message",
+        "text": "信息"
+      },
+      {
+        "pagePath": "pages/ai-research/ai-research",
+        "text": "AI研学"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "permission": {
+  },
+  "requiredBackgroundModes": [],
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "usingComponents": {
+    "custom-loading": "/components/custom-loading/custom-loading"
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "componentFramework": "glass-easel"
+}

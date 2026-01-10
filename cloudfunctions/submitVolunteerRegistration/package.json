@@ -1,0 +1,9 @@
+{
+  "name": "submitVolunteerRegistration",
+  "version": "1.0.0",
+  "description": "志愿者报名云函数",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+} 
