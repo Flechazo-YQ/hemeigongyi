@@ -3,7 +3,7 @@ const app = getApp()
 Page({
   data: {
     userInfo: null,
-    genders: ['男', '女'],
+    genders: ['女', '男'],
     politicalStatuses: ['群众', '共青团员', '中共预备党员', '中共党员', '其他'],
     genderIndex: -1,
     politicalIndex: -1
@@ -11,7 +11,7 @@ Page({
 
   onLoad() {
     const userInfo = app.globalData.userInfo || {};
-    
+
     // Initialize picker indices
     let genderIndex = -1;
     if (userInfo.gender) {
@@ -38,7 +38,7 @@ Page({
   onChooseAvatar(e) {
     console.log('onChooseAvatar triggered', e);
     const { avatarUrl } = e.detail;
-    
+
     // Ensure userInfo exists
     let { userInfo } = this.data;
     if (!userInfo) {
@@ -47,7 +47,7 @@ Page({
     }
 
     console.log('Selected avatar:', avatarUrl);
-    
+
     // Update local immediately for preview
     this.setData({
       'userInfo.avatarUrl': avatarUrl
@@ -62,7 +62,7 @@ Page({
 
     const userId = userInfo._id || 'temp_' + Date.now();
     const cloudPath = `avatars/${userId}_${Date.now()}.png`;
-    
+
     console.log('Uploading to:', cloudPath);
 
     wx.cloud.uploadFile({
@@ -71,19 +71,19 @@ Page({
       success: res => {
         const fileID = res.fileID;
         console.log('Avatar uploaded success:', fileID);
-        
+
         // Update with cloud ID
         this.setData({
           'userInfo.avatarUrl': fileID
         });
-        
+
         // Only try to update DB if we have a valid _id
         if (userInfo._id) {
           this.updateUserField({ avatarUrl: fileID });
         } else {
           console.log('No user _id, skipping DB update for now');
         }
-        
+
         wx.hideLoading();
       },
       fail: err => {
@@ -132,7 +132,7 @@ Page({
 
   onSaveProfile(e) {
     const { userInfo } = this.data;
-    
+
     if (!userInfo.name) {
       wx.showToast({ title: '请填写姓名', icon: 'none' });
       return;
@@ -145,7 +145,7 @@ Page({
     wx.showLoading({ title: '保存中...' });
 
     const db = wx.cloud.database();
-    
+
     // Fields to update
     const updateData = {
       name: userInfo.name,
@@ -166,10 +166,10 @@ Page({
       success: () => {
         wx.hideLoading();
         wx.showToast({ title: '保存成功', icon: 'success' });
-        
+
         // Update global data and storage
         this.updateGlobalData({ ...userInfo, ...updateData });
-        
+
         setTimeout(() => {
           wx.navigateBack();
         }, 1500);

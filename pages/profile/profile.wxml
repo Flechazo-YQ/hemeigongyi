@@ -1,98 +1,128 @@
 <!-- 个人中心页面 -->
 <view class="profile-container">
-  <!-- 根据登录状态显示不同内容 -->
-  <block wx:if="{{isLogin}}">
-    <!-- 顶部用户信息区域 -->
-    <view class="user-card-section">
-      <image 
-        wx:if="{{userType === 'admin'}}" 
-        class="admin-toggle-btn" 
-        src="/images/change_admin_user.svg" 
-        bindtap="toggleAdminView"
-      ></image>
-      <view class="user-info-card" bindtap="handleEditProfile">
-        <view class="avatar-wrapper">
-          <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.svg'}}" mode="aspectFill"></image>
+  <!-- 始终渲染个人中心框架 -->
+  <block>
+    <!-- 顶部统一卡片区域 -->
+    <view class="top-card-wrap entrance-fade-in">
+      <view class="user-header-new" bindtap="{{isLogin ? 'handleEditProfile' : 'handleLogin'}}" hover-class="hover-click">
+        <!-- 管理员切换视图按钮 -->
+        <image 
+          wx:if="{{isLogin && userType === 'admin'}}" 
+          class="admin-toggle-btn-top" 
+          src="/images/change_admin_user.svg" 
+          catchtap="toggleAdminView"
+        ></image>
+        <view class="avatar-block">
+          <image class="avatar-large" src="{{(isLogin && userInfo.avatarUrl) ? userInfo.avatarUrl : '/images/morentouxiang.svg'}}" mode="aspectFill"></image>
         </view>
         
-        <view class="info-section">
-          <view class="name-row">
-            <text class="nickname-text">{{userInfo.nickName || '微信用户'}}</text>
-            <view class="user-type-badge {{userType === 'admin' ? 'badge-admin' : 'badge-user'}}">
+        <view class="user-main-info">
+          <view class="name-row-new" wx:if="{{isLogin}}">
+            <text class="nickname-new {{!(userInfo.nickName || userInfo.name) ? 'name-placeholder' : ''}}">{{userInfo.nickName || userInfo.name || '请设置姓名'}}</text>
+            <view class="badge-role {{userType === 'admin' ? 'badge-role-admin' : ''}}">
               {{userType === 'admin' ? '管理员' : '普通用户'}}
             </view>
           </view>
-          <text class="edit-hint {{!isProfileComplete ? 'incomplete' : ''}}">{{!isProfileComplete ? '点击完善个人信息' : '点击编辑个人资料'}}</text>
+          <view class="name-row-new" wx:else>
+            <text class="nickname-new">点击登录 / 注册</text>
+          </view>
+          <text class="sub-text-new">{{isLogin ? '查看并编辑个人资料' : '登录后开启精彩志愿研学之旅'}}</text>
+        </view>
+        
+        <view class="arrow-right-new">❯</view>
+      </view>
+
+
+    </view>
+
+    <view class="content-body-new">
+      <!-- 管理员功能面板 -->
+      <view class="menu-list-new" wx:if="{{userType === 'admin' && isAdminView}}">
+        <view class="menu-group-title-new">管理面板</view>
+        
+        <view class="menu-card-new" hover-class="card-hover" bindtap="goToPublishVolunteer">
+          <view class="menu-inner">
+            <view class="icon-wrap icon-bg-red"><image src="/images/activities.svg" class="svg-icon-red"></image></view>
+            <text class="menu-label-new">发布志愿活动</text>
+          </view>
+          <view class="card-arrow">❯</view>
         </view>
 
-        <view class="arrow-icon">></view>
-      </view>
-    </view>
-
-    <view class="content-body">
-      <view class="menu-card">
-        <!-- 管理员功能 -->
-        <block wx:if="{{userType === 'admin' && isAdminView}}">
-          <view class="menu-group-title">管理功能</view>
-
-          <view class="menu-item" bindtap="goToPublishVolunteer">
-            <view class="menu-left">
-              <view class="menu-icon-box icon-publish-vol"></view>
-              <text class="menu-text">发布志愿活动</text>
-            </view>
-            <text class="arrow">></text>
+        <view class="menu-card-new" hover-class="card-hover" bindtap="goToPublishStudy">
+          <view class="menu-inner">
+            <view class="icon-wrap icon-bg-blue-new"><image src="/images/location.svg" class="svg-icon-blue"></image></view>
+            <text class="menu-label-new">发布研学活动</text>
           </view>
-          
-          <view class="menu-item" bindtap="goToPublishStudy">
-            <view class="menu-left">
-              <view class="menu-icon-box icon-publish-study"></view>
-              <text class="menu-text">发布研学活动</text>
-            </view>
-            <text class="arrow">></text>
-          </view>
-          
+          <view class="card-arrow">❯</view>
+        </view>
 
-          <view class="menu-item" bindtap="goToVolunteerSummary">
-            <view class="menu-left">
-              <view class="menu-icon-box icon-list-vol"></view>
-              <text class="menu-text">志愿活动汇总</text>
-            </view>
-            <text class="arrow">></text>
+        <view class="menu-card-new" hover-class="card-hover" bindtap="goToVolunteerSummary">
+          <view class="menu-inner">
+            <view class="icon-wrap icon-bg-green-new"><image src="/images/calendar.svg" class="svg-icon-green"></image></view>
+            <text class="menu-label-new">志愿活动汇总</text>
           </view>
-          
-          <view class="menu-item" bindtap="goToStudySummary">
-            <view class="menu-left">
-              <view class="menu-icon-box icon-list-study"></view>
-              <text class="menu-text">研学路线汇总</text>
-            </view>
-            <text class="arrow">></text>
-          </view>
+          <view class="card-arrow">❯</view>
+        </view>
 
-          <view class="menu-item" bindtap="goToBannerSettings">
-            <view class="menu-left">
-              <view class="menu-icon-box icon-banner-settings">🖼️</view>
-              <text class="menu-text">往期精彩设置</text>
-            </view>
-            <text class="arrow">></text>
+        <view class="menu-card-new" hover-class="card-hover" bindtap="goToStudySummary">
+          <view class="menu-inner">
+            <view class="icon-wrap icon-bg-purple-new"><image src="/images/search.svg" class="svg-icon-purple"></image></view>
+            <text class="menu-label-new">研学路线汇总</text>
           </view>
-        </block>
-        
+          <view class="card-arrow">❯</view>
+        </view>
 
+        <view class="menu-card-new" hover-class="card-hover" bindtap="goToBannerSettings">
+          <view class="menu-inner">
+            <view class="icon-wrap icon-bg-orange-new">
+              <image src="/images/picture.svg" class="svg-icon-red"></image>
+            </view>
+            <text class="menu-label-new">往期精彩设置</text>
+          </view>
+          <view class="card-arrow">❯</view>
+        </view>
       </view>
 
-      <button class="logout-btn" bindtap="handleLogout">退出登录</button>
-    </view>
-  </block>
+      <!-- 普通用户功能列表 -->
+      <view class="menu-list-new" wx:else>
+        <view class="menu-card-new" hover-class="card-hover" bindtap="goToMyActivities">
+          <view class="menu-inner">
+            <view class="icon-wrap icon-bg-red">
+              <image src="/images/calendar.svg" class="svg-icon"></image>
+            </view>
+            <text class="menu-label-new">我的活动</text>
+          </view>
+          <view class="card-arrow">❯</view>
+        </view>
 
-  <block wx:else>
-    <view class="login-prompt">
-      <image class="logo" src="/images/default-avatar.svg" mode="aspectFit"></image>
-      <view class="prompt-title">欢迎来到青椒童行</view>
-      <view class="prompt-desc">登录后开启精彩研学之旅</view>
-      <button class="login-btn-green" bindtap="handleLogin">
-        <image src="/images/wechat-logo.svg" class="btn-icon"></image>
-        微信一键登录
-      </button>
+        <view class="menu-card-new" hover-class="card-hover" bindtap="showContactUs">
+          <view class="menu-inner">
+            <view class="icon-wrap icon-bg-pink">
+              <image src="/images/message.svg" class="svg-icon"></image>
+            </view>
+            <text class="menu-label-new">联系客服</text>
+          </view>
+          <view class="card-arrow">❯</view>
+        </view>
+
+        <view class="menu-card-new" hover-class="card-hover" bindtap="showAboutUs">
+          <view class="menu-inner">
+            <view class="icon-wrap icon-bg-light-red">
+              <image src="/images/aboutus.svg" class="svg-icon"></image>
+            </view>
+            <text class="menu-label-new">关于我们</text>
+          </view>
+          <view class="card-arrow">❯</view>
+        </view>
+      </view>
+
+      <!-- 退出登录按钮 -->
+      <view class="logout-wrap" wx:if="{{isLogin}}">
+        <button class="logout-btn-new" bindtap="handleLogout">
+          <image src="/images/exit.svg" class="logout-icon-small"></image>
+          <text>退出登录</text>
+        </button>
+      </view>
     </view>
   </block>
 
@@ -101,12 +131,14 @@
     <view class="modal-content">
       <view class="modal-header">请完善个人信息</view>
       <view class="modal-body">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
-          <image class="avatar-preview" src="{{tempUserInfo.avatarUrl || '/images/default-avatar.svg'}}" mode="aspectFill"></image>
+        <view class="avatar-container">
+          <button class="avatar-wrapper" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+            <image class="avatar-preview" src="{{tempUserInfo.avatarUrl || '/images/morentouxiang.svg'}}" mode="aspectFill"></image>
+          </button>
           <view class="camera-badge">
-            <view class="camera-icon"></view>
+            <image src="/images/edit.svg" class="edit-icon-small"></image>
           </view>
-        </button>
+        </view>
         
         <view class="input-container">
           <view class="label">真实姓名</view>
@@ -116,6 +148,16 @@
       <view class="modal-footer">
         <button class="submit-btn" bindtap="submitLogin">提交</button>
       </view>
+    </view>
+  </view>
+
+  <!-- 联系客服弹窗 -->
+  <view class="login-modal" wx:if="{{showContactModal}}">
+    <view class="modal-content" style="text-align: center; padding: 40rpx;">
+      <view class="modal-header" style="margin-bottom: 20rpx;">联系管理员</view>
+      <image src="/images/qiyeweixinQR.svg" mode="aspectFit" style="width: 100%; height: 400rpx; margin-bottom: 20rpx;" show-menu-by-longpress></image>
+      <view style="font-size: 28rpx; color: #666; margin-bottom: 30rpx;">加管理员企业微信进行交流吧~</view>
+      <button class="submit-btn" bindtap="closeContactModal">确定</button>
     </view>
   </view>
 </view>

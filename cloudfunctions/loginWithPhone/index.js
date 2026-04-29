@@ -24,13 +24,14 @@ exports.main = async (event, context) => {
     const openid = wxContext.OPENID;
 
     // 2. 解密手机号
-    // 注意：在云函数中直接通过 API 获取手机号，无需 session_key
-    const phoneInfo = await cloud.getPhoneNumber({
-      code: event.phoneCode, // 前端通过 wx.getPhoneNumber 获取的 code
+    // 在云函数中使用 OpenAPI 获取手机号
+    const phoneInfo = await cloud.openapi.phonenumber.getPhoneNumber({
+      code: event.phoneCode, // 前端通过 getPhoneNumber 获取的 code
     });
 
     if (!phoneInfo || !phoneInfo.phoneNumber) {
-      throw new Error('Failed to decrypt phone number.');
+      console.error('phoneInfo error:', phoneInfo);
+      throw new Error('获取手机号失败: ' + (phoneInfo.errMsg || '未知错误'));
     }
 
     const { phoneNumber } = phoneInfo;

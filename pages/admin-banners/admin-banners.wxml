@@ -12,6 +12,7 @@
       <view class="banner-item">
         <image class="banner-img" src="{{item.url}}" mode="aspectFill"></image>
         <view class="banner-info">
+          <text class="banner-msg" wx:if="{{item.title}}">{{item.title}}</text>
           <text class="banner-link" selectable>跳转: {{item.link || '无链接'}}</text>
           <view class="delete-btn" bindtap="deleteBanner" data-id="{{item._id}}">删除</view>
         </view>
@@ -41,6 +42,16 @@
         </view>
       </view>
 
+      <view class="form-item">
+        <text class="label">大标题 (字体白色，黑色描边)</text>
+        <input class="input" placeholder="请输入大标题" value="{{tempTitle}}" bindinput="inputTitle" />
+      </view>
+      
+      <view class="form-item">
+        <text class="label">小标题 (字体白色，黑色描边)</text>
+        <input class="input" placeholder="请输入小标题" value="{{tempSubtitle}}" bindinput="inputSubtitle" />
+      </view>
+      
       <view class="form-item">
         <text class="label">跳转链接 (公众号文章)</text>
         <input class="input" placeholder="请输入链接" value="{{tempLink}}" bindinput="inputLink" />

@@ -25,10 +25,12 @@
                bindblur="onBlur"
                bindkeyboardheightchange="onKeyboardHeightChange" />
         <button class="send-btn" 
+                hover-class="hover-click"
                 bindtap="sendChatMessage">
           <text>发送</text>
         </button>
       </view>
+      <view class="ai-warning-text">此内容由AI生成，请仔细甄别</view>
     </view>
   </view>
 </view> 

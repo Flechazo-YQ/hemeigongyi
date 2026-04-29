@@ -13,7 +13,7 @@ App({
     this.checkLogin();
   },
 
-  checkLogin: function() {
+  checkLogin: function () {
     // 检查本地缓存中是否有登录状态
     const loginState = wx.getStorageSync('loginState');
     if (loginState && loginState.isLogin) {
@@ -24,13 +24,15 @@ App({
     }
   },
 
-  updateTabBar: function(userType) {
+  updateTabBar: function (userType) {
     // Just update the tab bar component state if it exists
     const pages = getCurrentPages();
     if (pages.length) {
       const currentPage = pages[pages.length - 1];
       if (typeof currentPage.getTabBar === 'function' && currentPage.getTabBar()) {
-        currentPage.getTabBar().updateList();
+        const tabbar = currentPage.getTabBar();
+        tabbar.updateList();
+        tabbar.setActiveByRoute(currentPage.route);
       }
     }
   },
@@ -41,58 +43,64 @@ App({
     viewMode: null, // 'user' or 'admin' - controls the UI view
     userInfo: null,
     userTabBarList: [
-      { 
-        "pagePath": "/pages/index/index", 
+      {
+        "pagePath": "/pages/index/index",
         "text": "首页",
         "iconPath": "/images/home.svg",
         "selectedIconPath": "/images/home.svg"
       },
-      { 
-        "pagePath": "/pages/ar-learning/ar-learning", 
-        "text": "AR伴学",
-        "iconPath": "/images/AR-active.svg",
-        "selectedIconPath": "/images/AR-active.svg"
+      {
+        "pagePath": "/pages/all-activities/all-activities",
+        "text": "活动",
+        "iconPath": "/images/activities.svg",
+        "selectedIconPath": "/images/activities.svg"
       },
-      { 
-        "pagePath": "/pages/message/message", 
-        "text": "信息",
-        "iconPath": "/images/message.svg",
-        "selectedIconPath": "/images/message.svg"
-      },
-      { 
-        "pagePath": "/pages/ai-research/ai-research", 
+      {
+        "pagePath": "/pages/ai-research/ai-research",
         "text": "AI研学",
         "iconPath": "/images/AI-active.svg",
         "selectedIconPath": "/images/AI-active.svg"
       },
       {
-        "pagePath": "/pages/profile/profile", 
+        "pagePath": "/pages/message/message",
+        "text": "信息",
+        "iconPath": "/images/message.svg",
+        "selectedIconPath": "/images/message.svg"
+      },
+      {
+        "pagePath": "/pages/profile/profile",
         "text": "我的",
         "iconPath": "/images/profile-active.svg",
         "selectedIconPath": "/images/profile-active.svg"
       }
     ],
     adminTabBarList: [
-      { 
-        "pagePath": "/pages/index/index", 
+      {
+        "pagePath": "/pages/index/index",
         "text": "首页",
         "iconPath": "/images/home.svg",
         "selectedIconPath": "/images/home.svg"
       },
-      { 
-        "pagePath": "/pages/admin-volunteer/admin-volunteer", 
+      {
+        "pagePath": "/pages/all-activities/all-activities",
+        "text": "活动",
+        "iconPath": "/images/activities.svg",
+        "selectedIconPath": "/images/activities.svg"
+      },
+      {
+        "pagePath": "/pages/ai-research/ai-research",
+        "text": "AI研学",
+        "iconPath": "/images/AI-active.svg",
+        "selectedIconPath": "/images/AI-active.svg"
+      },
+      {
+        "pagePath": "/pages/admin-volunteer/admin-volunteer",
         "text": "审核",
         "iconPath": "/images/volunteer-active.svg",
         "selectedIconPath": "/images/volunteer-active.svg"
       },
-      { 
-        "pagePath": "/pages/message/message", 
-        "text": "信息",
-        "iconPath": "/images/message.svg",
-        "selectedIconPath": "/images/message.svg"
-      },
-      { 
-        "pagePath": "/pages/profile/profile", 
+      {
+        "pagePath": "/pages/profile/profile",
         "text": "我的",
         "iconPath": "/images/profile-active.svg",
         "selectedIconPath": "/images/profile-active.svg"

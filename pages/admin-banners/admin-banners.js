@@ -6,7 +6,9 @@ Page({
     loading: false,
     showModal: false,
     tempImgUrl: '',
-    tempLink: ''
+    tempLink: '',
+    tempTitle: '',
+    tempSubtitle: ''
   },
 
   onLoad() {
@@ -37,7 +39,9 @@ Page({
     this.setData({
       showModal: true,
       tempImgUrl: '',
-      tempLink: ''
+      tempLink: '',
+      tempTitle: '',
+      tempSubtitle: ''
     });
   },
 
@@ -45,7 +49,7 @@ Page({
     this.setData({ showModal: false });
   },
 
-  preventBubble() {},
+  preventBubble() { },
 
   chooseImage() {
     wx.chooseMedia({
@@ -63,8 +67,16 @@ Page({
     this.setData({ tempLink: e.detail.value });
   },
 
+  inputTitle(e) {
+    this.setData({ tempTitle: e.detail.value });
+  },
+
+  inputSubtitle(e) {
+    this.setData({ tempSubtitle: e.detail.value });
+  },
+
   submitBanner() {
-    const { tempImgUrl, tempLink } = this.data;
+    const { tempImgUrl, tempLink, tempTitle, tempSubtitle } = this.data;
     if (!tempImgUrl) {
       wx.showToast({ title: '请上传图片', icon: 'none' });
       return;
@@ -74,20 +86,22 @@ Page({
 
     // 1. Upload image to cloud storage
     const cloudPath = `PastActivities/${Date.now()}-${Math.floor(Math.random() * 1000)}.jpg`;
-    
+
     wx.cloud.uploadFile({
       cloudPath: cloudPath,
       filePath: tempImgUrl,
       success: res => {
         const fileID = res.fileID;
-        
+
         // 2. Save to database via cloud function
         wx.cloud.callFunction({
           name: 'manageBanners',
           data: {
             action: 'add',
             url: fileID,
-            link: tempLink
+            link: tempLink,
+            title: tempTitle,
+            subtitle: tempSubtitle
           },
           success: dbRes => {
             this.hideAddModal();

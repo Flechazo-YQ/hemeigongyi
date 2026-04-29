@@ -337,6 +337,13 @@
   transition: all 0.3s;
 }
 
+.ai-warning-text {
+  text-align: center;
+  font-size: 22rpx;
+  color: #999;
+  padding-bottom: 20rpx;
+}
+
 
 
 

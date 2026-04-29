@@ -24,7 +24,7 @@ Page({
       this.setData({ loading: true });
     }
     const db = wx.cloud.database();
-    
+
     db.collection('research_routes')
       .where({
         type: this.data.type
@@ -34,21 +34,21 @@ Page({
       .then(res => {
         this.setData({ loading: false });
         const list = res.data.map(item => {
-            // Check deadline status
-            let status = 'recruiting';
-            if (item.deadline) {
-                 // Replace - with / for iOS compatibility
-                 const deadlineTime = new Date(item.deadline.replace(/-/g, '/')).getTime();
-                 const now = new Date().getTime();
-                 if (deadlineTime < now) {
-                     status = 'ended';
-                 }
+          // Check deadline status
+          let status = 'recruiting';
+          if (item.deadline) {
+            // Replace - with / for iOS compatibility
+            const deadlineTime = new Date(item.deadline.replace(/-/g, '/')).getTime();
+            const now = new Date().getTime();
+            if (deadlineTime < now) {
+              status = 'ended';
             }
-            return {
-                ...item,
-                status: status,
-                id: item._id // Ensure id is available
-            };
+          }
+          return {
+            ...item,
+            status: status,
+            id: item._id // Ensure id is available
+          };
         });
         this.setData({ list });
       })
@@ -74,17 +74,26 @@ Page({
       success: (res) => {
         if (res.confirm) {
           wx.showLoading({ title: '删除中...' });
-          const db = wx.cloud.database();
-          db.collection('research_routes').doc(id).remove()
-            .then(() => {
-                wx.hideLoading();
+          wx.cloud.callFunction({
+            name: 'deleteActivity',
+            data: {
+              id: id,
+              type: this.data.type
+            }
+          })
+            .then(res => {
+              wx.hideLoading();
+              if (res.result && res.result.success) {
                 wx.showToast({ title: '已删除', icon: 'success' });
                 this.loadList();
+              } else {
+                wx.showToast({ title: res.result.error || '删除失败', icon: 'none' });
+              }
             })
             .catch(err => {
-                wx.hideLoading();
-                console.error(err);
-                wx.showToast({ title: '删除失败', icon: 'none' });
+              wx.hideLoading();
+              console.error(err);
+              wx.showToast({ title: '删除失败', icon: 'none' });
             });
         }
       }

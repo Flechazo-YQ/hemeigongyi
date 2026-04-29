@@ -51,7 +51,7 @@ Page({
   showWelcomeMessage() {
     const text = '您好，欢迎来到AI研学规划，我是您的专属规划师"小椒"!'
     let index = 0
-    
+
     // 初始化一条空消息
     this.setData({
       chatHistory: [{
@@ -65,12 +65,12 @@ Page({
         clearInterval(timer)
         return
       }
-      
+
       const currentText = this.data.chatHistory[0].content + text[index]
       this.setData({
         'chatHistory[0].content': currentText
       })
-      
+
       index++
     }, 100)
   },
@@ -85,11 +85,7 @@ Page({
     }, 100)
   },
 
-  onShow() {
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setActiveByRoute(this.route)
-    }
-  },
+
 
   // 输入聊天消息
   onChatInput(e) {
@@ -101,7 +97,7 @@ Page({
   // 发送聊天消息
   async sendChatMessage() {
     const { chatMessage, chatHistory, isLoading } = this.data
-    
+
     if (!chatMessage.trim() || isLoading) {
       return
     }
@@ -111,13 +107,13 @@ Page({
       role: 'user',
       content: chatMessage
     }
-    
+
     const newHistory = [...chatHistory, userMessage]
-    
-    this.setData({ 
-      chatHistory: newHistory, 
+
+    this.setData({
+      chatHistory: newHistory,
       chatMessage: '',
-      isLoading: true 
+      isLoading: true
     })
     this.scrollToBottom();
 
@@ -127,7 +123,7 @@ Page({
       role: 'assistant',
       content: '' // 初始为空
     }
-    
+
     this.setData({
       chatHistory: [...newHistory, assistantMessage]
     })
@@ -138,7 +134,7 @@ Page({
         role: msg.role,
         content: msg.content
       }))
-      
+
       // 添加系统提示词
       apiMessages.unshift({
         role: 'system',
@@ -178,16 +174,16 @@ Page({
         // 简单的 UTF-8 解码 (兼容性处理)
         let text = '';
         for (let i = 0; i < uint8Array.length; i++) {
-            text += String.fromCharCode(uint8Array[i]);
+          text += String.fromCharCode(uint8Array[i]);
         }
         // 注意：这里简单的解码可能处理不了多字节字符被截断的情况，
         // 但在小程序环境中通常 TextDecoder 不可用，且 wx.request 的 chunk 通常是完整的 utf8 序列
         // 如果遇到乱码，需要引入更复杂的 utf8 解码库
         // 更好的方式是利用小程序基础库提供的 TextDecoder (如果版本支持)
         try {
-           text = decodeURIComponent(escape(text)); 
-        } catch(e) {
-           // Fallback if escape fails (e.g. partial sequence)
+          text = decodeURIComponent(escape(text));
+        } catch (e) {
+          // Fallback if escape fails (e.g. partial sequence)
         }
 
         // 解析 SSE 格式数据
@@ -199,7 +195,7 @@ Page({
           if (line.startsWith('data: ')) {
             const jsonStr = line.slice(6);
             if (jsonStr.trim() === '[DONE]') continue;
-            
+
             try {
               const json = JSON.parse(jsonStr);
               const content = json.choices[0]?.delta?.content || '';
@@ -231,7 +227,7 @@ Page({
       role: 'assistant',
       content: `抱歉，出错了：${errorMessage}`
     }]
-    
+
     this.setData({
       chatHistory: errorHistory,
       isLoading: false

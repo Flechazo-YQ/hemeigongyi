@@ -1,0 +1,43 @@
+<!-- pages/my-activities/my-activities.wxml -->
+<view class="page-container">
+  <!-- 顶部 Tabs -->
+  <view class="tabs">
+    <view class="tab-item {{currentTab === 'in-progress' ? 'active' : ''}}" bindtap="switchTab" data-tab="in-progress">
+      进行中
+    </view>
+    <view class="tab-item {{currentTab === 'completed' ? 'active' : ''}}" bindtap="switchTab" data-tab="completed">
+      已完成
+    </view>
+  </view>
+
+  <!-- 列表内容 -->
+  <scroll-view scroll-y class="content-scroll" refresher-enabled bindrefresherrefresh="onRefresh" refresher-triggered="{{isRefreshing}}">
+    <view class="activity-list">
+      <block wx:for="{{currentList}}" wx:key="_id">
+        <view class="activity-card" bindtap="goToDetail" data-id="{{item.activityId}}" data-type="{{item.type}}" data-title="{{item.displayTitle}}">
+          <view class="card-header">
+            <text class="activity-title">{{item.displayTitle}}</text>
+            <text class="status-tag {{item.regStatus === '已拒绝' || item.regStatus === '已取消' ? 'status-end' : 'status-active'}}">{{item.regStatus || '已报名'}}</text>
+          </view>
+          
+          <view class="card-body">
+            <view class="info-row">
+              <text class="info-text">类型: {{item.type === 'volunteer' ? '志愿活动' : '研学活动'}}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-text">报名时间: {{item.formattedTime}}</text>
+            </view>
+            <view class="info-row" wx:if="{{item.activityStatus}}">
+              <text class="info-text">活动状态: {{item.activityStatus}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+      
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{currentList.length === 0 && !isLoading}}">
+        <text>暂无相关活动</text>
+      </view>
+    </view>
+  </scroll-view>
+</view>

@@ -12,7 +12,8 @@ Page({
       nickName: ''
     },
     isProfileComplete: false,
-    isAdminView: true
+    isAdminView: true,
+    showContactModal: false
   },
 
   toggleAdminView() {
@@ -39,9 +40,9 @@ Page({
     this.setData({
       isAdminView: isAdminView
     });
-    
+
     app.globalData.viewMode = mode;
-    
+
     // Update TabBar
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().updateList();
@@ -66,7 +67,7 @@ Page({
       userInfo = loginState.userInfo;
       isLogin = true;
       userType = loginState.userType;
-      
+
       app.globalData.userInfo = userInfo;
       app.globalData.isLogin = true;
       app.globalData.userType = userType;
@@ -89,10 +90,11 @@ Page({
       isAdminView: app.globalData.viewMode === 'admin'
     });
 
-    // Update TabBar based on current viewMode
+    // Update TabBar visibility and list
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().updateList()
-      this.getTabBar().setActiveByRoute(this.route)
+      const tabbar = this.getTabBar();
+      tabbar.updateList();
+      tabbar.setActiveByRoute(this.route);
     }
 
     // 2. 如果已登录，静默从云端拉取最新用户信息，防止本地缓存不同步
@@ -111,16 +113,16 @@ Page({
         userType: latestUserInfo.role,
         isProfileComplete: this.checkProfileComplete(latestUserInfo)
       });
-      
+
       // 更新全局和缓存
       app.globalData.userInfo = latestUserInfo;
       app.globalData.userType = latestUserInfo.role;
-      
+
       const loginState = wx.getStorageSync('loginState') || {};
       loginState.userInfo = latestUserInfo;
       loginState.userType = latestUserInfo.role;
       wx.setStorageSync('loginState', loginState);
-      
+
       console.log('Fetched latest user info:', latestUserInfo);
       console.log('Profile complete:', this.checkProfileComplete(latestUserInfo));
     }).catch(err => {
@@ -132,7 +134,7 @@ Page({
     if (!userInfo) return false;
     // Required fields
     const requiredFields = ['name', 'gender', 'college', 'majorClass', 'studentId', 'phoneNumber', 'politicalStatus'];
-    
+
     // Check if every required field exists and is not empty
     return requiredFields.every(field => {
       const value = userInfo[field];
@@ -146,9 +148,9 @@ Page({
    * 点击登录按钮后，先检查用户状态
    * 如果已存在且有姓名，直接登录；否则弹出完善信息弹窗
    */
-  handleLogin: function() {
+  handleLogin: function () {
     wx.showLoading({ title: '检查登录状态...' });
-    
+
     wx.cloud.callFunction({
       name: 'quick-login',
       data: {}, // 不传参数，仅获取/创建基础用户
@@ -156,25 +158,25 @@ Page({
         wx.hideLoading();
         if (res.result && res.result.success) {
           const userInfo = res.result.userInfo;
-          
+
           // 判断用户是否已经填写过真实姓名（非默认 '微信用户'）或已有 name 字段
           // 如果已填写，直接登录
           if ((userInfo.nickName && userInfo.nickName !== '微信用户') || userInfo.name) {
-             this.updateLoginState(userInfo);
-             wx.showToast({ title: '欢迎回来', icon: 'success' });
+            this.updateLoginState(userInfo);
+            wx.showToast({ title: '欢迎回来', icon: 'success' });
           } else {
-             // 未填写过信息，显示弹窗
-             this.setData({
-               showLoginModal: true,
-               tempUserInfo: {
-                 avatarUrl: userInfo.avatarUrl || '',
-                 nickName: userInfo.nickName === '微信用户' ? '' : userInfo.nickName
-               }
-             });
+            // 未填写过信息，显示弹窗
+            this.setData({
+              showLoginModal: true,
+              tempUserInfo: {
+                avatarUrl: userInfo.avatarUrl || '',
+                nickName: userInfo.nickName === '微信用户' ? '' : userInfo.nickName
+              }
+            });
           }
         } else {
-           // 异常情况，降级显示弹窗
-           this.setData({ showLoginModal: true, tempUserInfo: { avatarUrl: '', nickName: '' } });
+          // 异常情况，降级显示弹窗
+          this.setData({ showLoginModal: true, tempUserInfo: { avatarUrl: '', nickName: '' } });
         }
       },
       fail: (err) => {
@@ -186,7 +188,7 @@ Page({
     });
   },
 
-  closeLoginModal: function() {
+  closeLoginModal: function () {
     this.setData({ showLoginModal: false });
   },
 
@@ -203,9 +205,9 @@ Page({
     });
   },
 
-  submitLogin: function() {
+  submitLogin: function () {
     const { avatarUrl, nickName } = this.data.tempUserInfo;
-    
+
     if (!nickName || !nickName.trim()) {
       wx.showToast({
         title: '请填写真实姓名',
@@ -222,7 +224,7 @@ Page({
   /**
    * 调用云函数进行真实的登录/注册
    */
-  doCloudLogin: function(avatarUrl, nickName) {
+  doCloudLogin: function (avatarUrl, nickName) {
     wx.showLoading({ title: '登录中...' });
 
     wx.cloud.callFunction({
@@ -235,11 +237,11 @@ Page({
         wx.hideLoading();
         if (res.result && res.result.success) {
           const userInfo = res.result.userInfo;
-          
+
           // 登录成功，更新状态
           this.updateLoginState(userInfo);
           this.setData({ showLoginModal: false });
-          
+
           wx.showToast({
             title: '登录成功',
             icon: 'success'
@@ -268,7 +270,7 @@ Page({
    * 对应需求：授权成功后将 userInfo 存储到 globalData 和 wx.setStorageSync
    * @param {Object} userInfo 用户信息对象
    */
-  updateLoginState: function(userInfo) {
+  updateLoginState: function (userInfo) {
     // 1. 更新全局数据
     app.globalData.isLogin = true;
     app.globalData.userInfo = userInfo;
@@ -287,11 +289,9 @@ Page({
       userInfo: userInfo,
       userType: userInfo.role
     });
-    
-    // 4. 如果是管理员，更新 TabBar
-    if (userInfo.role === 'admin') {
-      app.updateTabBar('admin');
-    }
+
+    // 4. 更新 TabBar
+    app.updateTabBar(userInfo.role);
   },
 
   goToPublishVolunteer() {
@@ -306,9 +306,13 @@ Page({
     });
   },
 
-  goToAdminVolunteer() {
+  goToMyActivities() {
+    if (!this.data.isLogin) {
+      wx.showToast({ title: '请先登录体验完成服务吧！', icon: 'none' });
+      return;
+    }
     wx.navigateTo({
-      url: '/pages/admin-volunteer/admin-volunteer'
+      url: '/pages/my-activities/my-activities'
     });
   },
 
@@ -328,7 +332,7 @@ Page({
       url: '/pages/admin-banners/admin-banners'
     })
   },
-  handleGetPhoneNumber: function(e) {
+  handleGetPhoneNumber: function (e) {
     if (e.detail.errMsg !== 'getPhoneNumber:ok') {
       wx.showToast({
         title: '授权失败',
@@ -339,54 +343,49 @@ Page({
 
     wx.showLoading({ title: '登录中...' });
 
-    wx.cloud.callFunction({
-      name: 'login-with-phone',
-      data: {
-        phoneCode: e.detail.code
-      },
-      success: res => {
-        wx.hideLoading();
-        if (res.result && res.result.ok) {
-          const { user } = res.result;
-          // Store login state globally and locally
-          app.globalData.isLogin = true;
-          app.globalData.userInfo = user;
-          app.globalData.userType = user.role;
-          wx.setStorageSync('loginState', {
-            isLogin: true,
-            userInfo: user,
-            userType: user.role
+    // 1. 调用 wx.login 获取用于登录的 code
+    wx.login({
+      success: (loginRes) => {
+        if (loginRes.code) {
+          // 2. 调用云函数，传入手机号 code (phoneCode) 和 登录 code (code)
+          wx.cloud.callFunction({
+            name: 'loginWithPhone',
+            data: {
+              phoneCode: e.detail.code,
+              code: loginRes.code
+            },
+            success: res => {
+              wx.hideLoading();
+              if (res.result && res.result.ok) {
+                const { user } = res.result;
+                // 使用公共方法更新登录状态
+                this.updateLoginState(user);
+
+                wx.showToast({ title: '登录成功', icon: 'success' });
+              } else {
+                wx.showToast({
+                  title: res.result.error || '登录失败',
+                  icon: 'none'
+                });
+              }
+            },
+            fail: err => {
+              wx.hideLoading();
+              wx.showToast({
+                title: '调用云函数失败',
+                icon: 'none'
+              });
+              console.error('Login cloud function call failed:', err);
+            }
           });
-
-          // Update current page data
-          this.setData({
-            isLogin: true,
-            userInfo: user,
-            userType: user.role
-          });
-
-          wx.showToast({ title: '登录成功', icon: 'success' });
-          
-          // Optional: redirect to another page or just refresh
-          // If admin, maybe switch to admin index
-          if (user.role === 'admin') {
-            app.updateTabBar('admin');
-          }
-
         } else {
-          wx.showToast({
-            title: res.result.error || '登录失败',
-            icon: 'none'
-          });
+          wx.hideLoading();
+          wx.showToast({ title: 'Code 获取失败', icon: 'none' });
         }
       },
-      fail: err => {
+      fail: () => {
         wx.hideLoading();
-        wx.showToast({
-          title: '调用云函数失败',
-          icon: 'none'
-        });
-        console.error('Login cloud function call failed:', err);
+        wx.showToast({ title: 'wx.login 失败', icon: 'none' });
       }
     });
   },
@@ -394,38 +393,60 @@ Page({
   /**
    * 跳转到编辑资料页面
    */
-  handleEditProfile: function() {
+  handleEditProfile: function () {
     wx.navigateTo({
       url: '/pages/profile-edit/profile-edit'
     });
   },
 
-  handleLogout: function() {
+  showContactUs() {
+    this.setData({
+      showContactModal: true
+    });
+  },
+
+  closeContactModal() {
+    this.setData({
+      showContactModal: false
+    });
+  },
+
+  showAboutUs: function () {
+    wx.showModal({
+      title: '关于我们',
+      content: '和美共益（杭州）文化科技有限公司',
+      showCancel: false,
+      confirmText: '知道了',
+      confirmColor: '#A62F39'
+    });
+  },
+
+  handleLogout: function () {
     wx.showModal({
       title: '提示',
       content: '确定要退出登录吗？',
       success: (res) => {
         if (res.confirm) {
           // 对应需求：退出登录：清除登录状态，重置页面
-          
+
           // 1. 清除全局状态
           app.globalData.isLogin = false;
           app.globalData.userType = null;
           app.globalData.userInfo = null;
-          
+
           // 2. 清除本地缓存
           wx.removeStorageSync('loginState');
-          
+
           // 3. 重置当前页面数据
           this.setData({
             isLogin: false,
             userInfo: null,
             userType: ''
           });
-          
+
           // 4. 重置 TabBar 为普通用户模式
           app.updateTabBar('user');
-          
+
           wx.showToast({ title: '已退出', icon: 'none' });
         }
       }

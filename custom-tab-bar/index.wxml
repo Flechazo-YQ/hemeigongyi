@@ -1,5 +1,5 @@
 <!-- custom-tab-bar/index.wxml -->
-<view class="tab-bar">
+<view class="tab-bar" wx:if="{{show}}">
   <view wx:for="{{ list }}" wx:key="pagePath" class="tab-bar-item {{selected === index ? 'active' : ''}}" bindtap="switchTab" data-path="{{item.pagePath}}" data-index="{{index}}">
     <image class="tab-icon {{item.text === 'AI研学' ? 'ai-research-icon' : ''}}" src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></image>
     <view class="tab-text" style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</view>

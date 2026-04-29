@@ -1,30 +1,80 @@
-<view class="page-container">
-  <view class="tabs">
-    <view class="tab-item {{activeTab === 'volunteer' ? 'active' : ''}}" bindtap="switchTab" data-type="volunteer">志愿者活动</view>
-    <view class="tab-item {{activeTab === 'study' ? 'active' : ''}}" bindtap="switchTab" data-type="study">研学活动</view>
-  </view>
-
-  <scroll-view scroll-y class="list-container">
-    <custom-loading show="{{loading}}" />
-    
-    <block wx:if="{{!loading && list.length > 0}}">
-      <view class="activity-card {{item.status === 'ended' ? 'card-disabled' : ''}}" wx:for="{{list}}" wx:key="_id" bindtap="goToDetail" data-id="{{item._id}}">
-        <view class="card-header">
-          <text class="card-title">{{item.title}}</text>
-          <text class="status-tag {{item.status === 'ended' ? 'status-ended' : 'status-active'}}">{{item.status === 'ended' ? '已结束' : '招募中'}}</text>
+<view class="calendar-page">
+    <!-- 日历外层：卡片样式 -->
+    <view class="calendar-card-container {{showEntrance ? 'entrance-fade-in' : 'initial-state'}}" style="animation-delay: 0ms;">
+      <!-- 日历头部：月份切换 -->
+      <view class="calendar-header">
+        <view class="month-nav" bindtap="prevMonth">
+          <text class="nav-arrow">❮</text>
+          <text class="nav-text">上月</text>
         </view>
-        <view class="card-body">
-          <view class="info-row">时间: {{item.start_date || item.time}}</view>
-          <view class="info-row">地点: {{item.location || item.place || '待定'}}</view>
+        <view class="current-month-title">
+          <text class="year-num">{{currentYear}}年</text>
+          <text class="month-num">{{currentMonth}}月</text>
         </view>
-        <view class="card-footer">
-          <text class="arrow-right">></text>
+        <view class="month-nav" bindtap="nextMonth">
+          <text class="nav-text">下月</text>
+          <text class="nav-arrow">❯</text>
         </view>
       </view>
-    </block>
-    
-    <block wx:if="{{!loading && list.length === 0}}">
-      <empty-placeholder show="{{true}}" text="暂无活动" />
-    </block>
-  </scroll-view>
+
+      <!-- 日历星期条 -->
+      <view class="weekdays {{showEntrance ? 'entrance-fade-in' : 'initial-state'}}" style="animation-delay: 100ms;">
+        <view wx:for="{{weekdays}}" wx:key="*this" class="weekday">{{item}}</view>
+      </view>
+
+      <!-- 日历网格平移容器 -->
+      <view class="calendar-grid-wrapper {{showEntrance ? 'entrance-fade-in' : 'initial-state'}}" style="animation-delay: 200ms;">
+        <view class="calendar-grid {{transitionAnimation}}">
+          <view 
+            wx:for="{{days}}" 
+            wx:key="fullDate" 
+            class="day-cell {{item.type}} {{selectedDate === item.fullDate ? 'selected' : ''}}"
+            bindtap="selectDate"
+            data-date="{{item.fullDate}}"
+          >
+            <view class="day-num">{{item.day}}</view>
+            <view class="activity-dot" wx:if="{{item.hasActivity}}"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 活动展示区域 -->
+    <scroll-view class="activity-section" scroll-y="true">
+      <view class="section-title {{showEntrance ? 'entrance-fade-in' : 'initial-state'}}" style="animation-delay: 300ms;">
+        <view class="title-line"></view>
+        <text>{{selectedDate}} 活动</text>
+      </view>
+
+      <view class="activity-list" wx:if="{{selectedDayActivities.length > 0}}">
+        <view 
+          wx:for="{{selectedDayActivities}}" 
+          wx:key="_id" 
+          class="activity-item {{showEntrance ? 'entrance-fade-in' : 'initial-state'}}" 
+          style="animation-delay: {{index * 100 + 400}}ms"
+          bindtap="goToDetail" 
+          data-id="{{item._id}}"
+        >
+          <view class="activity-info">
+            <text class="activity-name">{{item.title}}</text>
+            <view class="activity-meta">
+              <view class="meta-item">
+                <image class="meta-icon" src="/images/location.svg"></image>
+                <text>{{item.location || '线上活动'}}</text>
+              </view>
+              <view class="meta-item">
+                <image class="meta-icon" src="/images/clock.svg"></image>
+                <text>{{item.start_date || item.time}}</text>
+              </view>
+            </view>
+            <view class="go-btn">查看详情</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-activities" wx:else>
+        <image class="empty-img" src="/images/calendar.svg"></image>
+        <text>这一天暂时没有安排活动哦</text>
+      </view>
+    </scroll-view>
 </view>

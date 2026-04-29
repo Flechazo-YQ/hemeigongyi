@@ -45,6 +45,6 @@
     </view>
   </scroll-view>
 
-  <!-- 手动引入 TabBar (因为此页面不在 app.json tabBar 列表中) -->
-  <custom-tab-bar selected="{{1}}"></custom-tab-bar>
+  <!-- 底部留白，防止内容被 TabBar 遮挡 -->
+  <view style="height: 120rpx;"></view>
 </view>

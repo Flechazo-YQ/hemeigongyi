@@ -7,23 +7,14 @@ page {
   --accent-color: #FD79A8; /* 粉色点缀 */
   --text-main: #2D3436;
   --text-sub: #636E72;
-  --bg-color: #F8F9FA;
-  --card-bg: #FFFFFF;
   
-  background-color: var(--bg-color);
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
-  color: var(--text-main);
   padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* ---- 头部区域 ---- */
 .header-section {
-  padding: 40rpx 30rpx;
-  background: var(--card-bg);
-  border-bottom-left-radius: 40rpx;
-  border-bottom-right-radius: 40rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
-  margin-bottom: 30rpx;
+  padding: 40rpx 30rpx !important;
+  margin: 24rpx !important; /* override card margin to be standard */
 }
 
 .header-tags {
@@ -59,19 +50,13 @@ page {
 
 /* ---- 内容卡片区域 ---- */
 .content-card {
-  padding: 0 30rpx;
-  /* z-index: 3; No overlap needed now */
+  padding: 0; 
 }
 
 /* 信息网格 (垂直布局) */
 .info-grid {
   display: flex;
   flex-direction: column; /* 垂直排列 */
-  background: var(--card-bg);
-  padding: 30rpx;
-  border-radius: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06);
-  margin-bottom: 40rpx;
 }
 
 .info-item {
@@ -119,11 +104,7 @@ page {
 
 /* 详情板块 - 保持一致 */
 .detail-section {
-  background: var(--card-bg);
-  border-radius: 24rpx;
-  padding: 40rpx 30rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03);
+  /* Inherits from .card-box */
 }
 
 .section-header {

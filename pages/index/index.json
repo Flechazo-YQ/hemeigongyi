@@ -1,3 +1,6 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "custom-loading": "/components/custom-loading/custom-loading"
+  },
+  "navigationStyle": "custom"
 }

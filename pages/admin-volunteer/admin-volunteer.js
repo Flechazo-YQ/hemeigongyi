@@ -8,9 +8,10 @@ Page({
   },
 
   onShow() {
-    // 统一底部导航高亮
-    // 注意：因为此页面是手动引入 custom-tab-bar，所以不能使用 this.getTabBar()
-    // 而是依赖组件自身的初始化逻辑 (attached)
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().updateList();
+      this.getTabBar().setActiveByRoute(this.route);
+    }
     this.loadData();
   },
 
@@ -44,7 +45,7 @@ Page({
         const processedList = allActivities.map(item => {
           const isVolunteer = item.type === 'volunteer';
           const quota = item.quota || 0;
-          
+
           // 根据活动类型获取当前报名人数
           let current = 0;
           if (isVolunteer) {
@@ -54,7 +55,7 @@ Page({
           }
 
           const deadline = item.deadline || '';
-          
+
           // 简单判断状态
           let status = '招募中';
           if (current >= quota) status = '已满员';

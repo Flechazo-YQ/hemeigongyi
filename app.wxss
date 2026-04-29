@@ -7,4 +7,60 @@
   justify-content: space-between;
   padding: 200rpx 0;
   box-sizing: border-box;
+}
+
+page {
+  background-color: #F6F8FA;
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+}
+
+.hover-click {
+  opacity: 0.8 !important;
+  transform: scale(0.97) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.card-box {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.03);
+  overflow: hidden;
 } 
+/* --- 全局入场动画系统 --- */
+@keyframes fadeInUp {
+  from {
+    transform: translateY(15px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(15px);
+    opacity: 0;
+  }
+}
+
+.entrance-fade-in {
+  opacity: 0;
+  animation: fadeInUp 250ms cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+.exit-fade-out {
+  animation: fadeOutDown 250ms cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+.initial-state {
+  opacity: 0;
+}

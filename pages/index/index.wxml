@@ -1,67 +1,114 @@
 <scroll-view scroll-y="true" style="height: 100vh;">
-<!-- 顶部轮播图 -->
-<view class="section-header">|| 往期精彩</view>
-<swiper class="banner-swiper" indicator-dots="true" autoplay="true" interval="5000" duration="500">
-  <block wx:for="{{banners}}" wx:key="url">
-    <swiper-item>
-      <image src="{{item.url}}" mode="aspectFill" class="slide-image" bindtap="onBannerTap" data-link="{{item.link}}"></image>
-    </swiper-item>
-  </block>
-</swiper>
-
-<!-- 活动报名入口 -->
-<view class="section-header-row">
-  <view class="section-header">|| 活动报名</view>
-  <view class="more-link" bindtap="goToAllActivities">查看更多 ></view>
-</view>
-<view class="entry-buttons">
-  <view class="entry-btn volunteer-btn {{activeTab === 'volunteer' ? 'active' : ''}}" bindtap="onVolunteerTap">志愿者报名</view>
-  <view class="entry-btn study-btn {{activeTab === 'study' ? 'active' : ''}}" bindtap="onStudyTap">研学报名</view>
-</view>
-
-<!-- 搜索和筛选 -->
-<view class="search-filter-bar">
-  <view class="search-box">
-    <input class="search-input" placeholder="搜索活动" bindinput="onSearchInput" />
-    <view class="search-icon">🔍</view>
-  </view>
-  <picker bindchange="onCategoryChange" value="{{categoryIndex}}" range="{{categories}}">
-    <view class="filter-dropdown">
-      <text>{{categories[categoryIndex]}}</text>
-      <text class="arrow-down">∨</text>
-    </view>
-  </picker>
-</view>
-
-<!-- 路线/活动列表 -->
-<view class="route-list">
-  <custom-loading show="{{loading}}" />
-  
-  <!-- 无数据状态 -->
-  <view wx:if="{{!loading && filteredRoutes.length === 0}}" class="no-data">
-    <text>当前暂无活动</text>
-  </view>
-  
-  <!-- 列表项 -->
-  <view wx:else>
-    <view wx:for="{{filteredRoutes}}" wx:key="_id" class="activity-card" bindtap="goToDetail" data-id="{{item._id || item.id}}">
-      <view class="card-header">
-        <text class="card-title">{{item.title}}</text>
-        <text class="card-category">分类: {{item.category}}</text>
-      </view>
-      <view class="card-body">
-        <view class="info-row">时间: {{item.start_date || item.time}}</view>
-        <view class="info-row">地点: {{item.location || item.place || '待定'}}</view>
-        <view class="info-row">人数: {{item.current_count || 0}}/{{item.quota}}</view>
-      </view>
-      <view class="card-footer">
-        <text class="arrow-right">></text>
-      </view>
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav" style="height:{{navHeight}}px; padding-top:{{statusBarHeight}}px;">
+    <view class="nav-content" style="top:{{navTop}}px; left:{{navLeft}}px;">
+      <text class="nav-brand">和美共益</text>
     </view>
   </view>
-</view>
 
-  <view style="height: 150rpx;"></view>
+  <view class="swiper-wrapper {{showEntrance ? 'entrance-fade-in' : 'initial-state'}}" style="margin-top: 30rpx; animation-delay: 0ms;">
+    <swiper class="banner-swiper" indicator-dots="{{false}}" autoplay="true" interval="5000" duration="500" circular="true" current="{{swiperCurrent}}" bindchange="onSwiperChange">
+      <block wx:for="{{banners}}" wx:key="url">
+        <swiper-item>
+          <view class="slide-container" bindtap="onBannerTap" data-link="{{item.link}}">
+            <image src="{{item.url}}" mode="aspectFill" class="slide-image"></image>
+            <view class="banner-caption">
+              <view class="tag-hot" wx:if="{{item.tag || '往期精彩'}}">{{item.tag || '往期精彩'}}</view>
+              <view class="banner-title">{{item.title || ''}}</view>
+              <view class="banner-subtitle">{{item.subtitle || ''}}</view>
+            </view>
+          </view>
+        </swiper-item>
+      </block>
+    </swiper>
+    
+    <!-- 自定义始终显示的背景装饰 (可选，根据图片效果) -->
+  </view>
+
+  <!-- 自定义指示点 - 放在图片下方 -->
+  <view class="swiper-dots-below">
+    <block wx:for="{{banners}}" wx:key="url" wx:for-index="index">
+      <view class="dot {{index === swiperCurrent ? 'active' : ''}}"></view>
+    </block>
+  </view>
+
+  <!-- 搜索和筛选 -->
+  <view class="unified-search-unit {{showEntrance ? 'entrance-fade-in' : 'initial-state'}} {{searchFocused ? 'search-unit-focused' : ''}}" style="animation-delay: 100ms;">
+    <block wx:if="{{isAuthorized}}">
+      <picker bindchange="onCategoryChange" value="{{categoryIndex}}" range="{{categories}}">
+        <view class="category-btn" hover-class="category-btn-hover">
+          <text>{{categories[categoryIndex] || '全部'}}</text>
+          <text class="arrow-tiny">▾</text>
+        </view>
+      </picker>
+    </block>
+    <block wx:else>
+      <view class="category-btn" hover-class="category-btn-hover" catchtap="forceLoginAction">
+        <text>{{categories[categoryIndex] || '全部'}}</text>
+        <text class="arrow-tiny">▾</text>
+      </view>
+    </block>
+
+    <view class="vertical-divider"></view>
+
+    <view class="search-bar-new">
+      <block wx:if="{{isAuthorized}}">
+        <input class="search-input-new" placeholder="搜索活动..." bindinput="onSearchInput" bindconfirm="executeSearch" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
+        <image class="search-icon-small" src="/images/search.svg" bindtap="executeSearch"></image>
+      </block>
+      <block wx:else>
+        <input class="search-input-new" disabled placeholder="搜索活动..." catchtap="forceLoginAction" />
+        <image class="search-icon-small" src="/images/search.svg" catchtap="forceLoginAction"></image>
+      </block>
+    </view>
+  </view>
+
+  <!-- 路线/活动列表 -->
+  <view class="route-list">
+    
+    <!-- 无数据状态 -->
+    <view wx:if="{{!loading && filteredRoutes.length === 0}}" class="empty-state {{showEntrance ? 'entrance-fade-in' : 'initial-state'}}" style="animation-delay: 200ms;">
+      <view class="empty-icon-container">
+        <image class="empty-calendar-icon" src="/images/calendar.svg"></image>
+      </view>
+      <view class="empty-title">
+        <block wx:if="{{submittedSearchQuery}}">哎呀，没有找到与“{{submittedSearchQuery}}”相关的活动</block>
+        <block wx:else>当前暂无活动</block>
+      </view>
+      <view class="empty-desc">
+        <block wx:if="{{submittedSearchQuery}}">换个关键词试试看吧，期待能为您找到合适的活动~</block>
+        <block wx:else>目前没有正在进行的{{activeTab === 'volunteer' ? '志愿服务' : '研学活动'}}，关注我们，第一时间获取最新资讯。</block>
+      </view>
+    </view>
+    
+    <!-- 列表项 -->
+    <view wx:else>
+      <view 
+        wx:for="{{filteredRoutes}}" 
+        wx:key="_id" 
+        class="activity-card {{showEntrance ? 'entrance-fade-in' : 'initial-state'}}" 
+        style="animation-delay: {{index * 100 + 200}}ms"
+        hover-class="card-press-feedback" 
+        bindtap="goToDetail" 
+        data-id="{{item._id || item.id}}"
+      >
+        <view class="card-header">
+          <text class="card-title">{{item.title}}</text>
+          <text class="card-category">分类: {{item.category}}</text>
+        </view>
+        <view class="card-body">
+          <view class="info-row">时间: {{item.start_date || item.time}}</view>
+          <view class="info-row">地点: {{item.location || item.place || '待定'}}</view>
+          <view class="info-row">人数: {{item.current_count || 0}}/{{item.quota}}</view>
+        </view>
+        <view class="card-footer">
+          <text class="arrow-right">></text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view style="height: 80rpx;"></view>
 </scroll-view>
 
 <!-- 报名弹窗 (保留原有逻辑，但可能需要调整触发方式) -->
@@ -95,4 +142,3 @@
     </form>
   </view>
 </view>
-

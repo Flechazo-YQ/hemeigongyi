@@ -3,8 +3,8 @@
   "packOptions": {
     "ignore": [
       {
-        "type": "folder",
-        "value": ".venv"
+        "value": ".venv",
+        "type": "folder"
       }
     ],
     "include": []
@@ -42,10 +42,19 @@
     "minifyWXML": true,
     "swc": true,
     "disableSWC": false,
-    "condition": true
+    "condition": true,
+    "compileWorklet": false,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
   },
   "compileType": "miniprogram",
-  "libVersion": "2.19.4",
+  "libVersion": "3.5.5",
   "appid": "wx8eba34c3c73d6550",
   "projectname": "研学报名小程序",
   "condition": {},
@@ -56,5 +65,6 @@
   "cloudfunctionRoot": "cloudfunctions/",
   "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
   "miniprogramRoot": "./",
-  "cloudfunctionEnv": "cloud1-0gmvnn0id639de25"
+  "cloudfunctionEnv": "cloud1-0gmvnn0id639de25",
+  "simulatorPluginLibVersion": {}
 }

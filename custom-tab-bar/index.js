@@ -11,8 +11,9 @@ Component({
   data: {
     // selected: 0, // Moved to properties to allow external control
     color: "#666",
-    selectedColor: "#1989fa",
-    list: []
+    selectedColor: "#D84315",
+    list: [],
+    show: false
   },
   attached() {
     this.updateList()
@@ -23,7 +24,10 @@ Component({
       // Use viewMode if set, otherwise fallback to userType
       const currentMode = app.globalData.viewMode || userType;
       const list = currentMode === 'admin' ? app.globalData.adminTabBarList : app.globalData.userTabBarList
-      this.setData({ list })
+      this.setData({
+        list,
+        show: true // 永远显示导航栏，起到预览作用
+      })
     },
     setActiveByRoute(route) {
       if (!route) return
@@ -37,16 +41,17 @@ Component({
     switchTab(e) {
       const data = e.currentTarget.dataset
       const url = data.path
-      
+
       // Check login status
       const isLogin = app.globalData.isLogin;
       // Normalize paths for comparison
       const targetPath = url.startsWith('/') ? url : '/' + url;
       const profilePath = '/pages/profile/profile';
+      const homePath = '/pages/index/index';
 
-      if (!isLogin && targetPath !== profilePath) {
+      if (!isLogin && targetPath !== profilePath && targetPath !== homePath) {
         wx.showToast({
-          title: '请先登录',
+          title: '请先登录体验完成服务吧！',
           icon: 'none'
         });
         // Redirect to profile page for login

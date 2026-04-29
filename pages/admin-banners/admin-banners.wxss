@@ -40,20 +40,30 @@
 }
 
 .banner-info {
-  padding: 20rpx;
+  padding: 24rpx;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.banner-msg {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
 }
 
 .banner-link {
   font-size: 24rpx;
-  color: #666;
-  flex: 1;
-  margin-right: 20rpx;
+  color: #999;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.banner-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10rpx;
 }
 
 .delete-btn {
@@ -80,9 +90,10 @@
 }
 
 .add-btn {
-  background: #07c160;
+  background: #A62F39;
   color: #fff;
   border-radius: 50rpx;
+  box-shadow: 0 8rpx 24rpx rgba(166, 47, 57, 0.3);
 }
 
 /* Modal */
@@ -176,6 +187,6 @@
 }
 
 .confirm {
-  background: #07c160;
+  background: #A62F39;
   color: #fff;
 }
