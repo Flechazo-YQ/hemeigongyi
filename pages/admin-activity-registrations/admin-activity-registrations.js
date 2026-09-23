@@ -5,6 +5,7 @@ Page({
     title: '',
     list: [],
     loading: false,
+    exporting: false,
     showModal: false,
     selectedItem: null,
     auditReason: ''
@@ -39,7 +40,7 @@ Page({
       if (res.result.success) {
         const list = res.result.data.registrations.map(item => {
             // Format date
-            let date = new Date(item.create_time);
+            let date = new Date(item.create_time || item.createdAt);
             let dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
             
             // Normalize status for display
@@ -103,7 +104,7 @@ Page({
       name: 'updateRegistrationStatus',
       data: {
         id: this.data.selectedItem._id,
-        type: this.data.type,
+        sourceCollection: this.data.selectedItem.sourceCollection,
         status: status,
         reason: this.data.auditReason // Pass the reason
       }
@@ -120,6 +121,41 @@ Page({
       wx.hideLoading();
       console.error(err);
       wx.showToast({ title: '操作失败', icon: 'none' });
+    });
+  },
+
+  exportRegistrations() {
+    if (this.data.exporting) return;
+
+    this.setData({ exporting: true });
+    wx.showLoading({ title: '正在生成表格...' });
+
+    wx.cloud.callFunction({
+      name: 'exportToExcel',
+      data: {
+        activityId: this.data.id,
+        title: this.data.title
+      }
+    }).then(res => {
+      if (!res.result || !res.result.success || !res.result.fileID) {
+        console.error('导出云函数返回异常', res);
+        throw new Error((res.result && res.result.error) || '导出服务未部署或返回异常');
+      }
+
+      return wx.cloud.downloadFile({ fileID: res.result.fileID });
+    }).then(res => {
+      wx.hideLoading();
+      wx.openDocument({
+        filePath: res.tempFilePath,
+        fileType: 'xlsx',
+        showMenu: true
+      });
+    }).catch(err => {
+      wx.hideLoading();
+      console.error('导出报名信息失败', err);
+      wx.showToast({ title: err.message || '导出失败', icon: 'none' });
+    }).finally(() => {
+      this.setData({ exporting: false });
     });
   },
 

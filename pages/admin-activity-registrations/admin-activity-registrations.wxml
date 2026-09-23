@@ -1,8 +1,13 @@
 <custom-loading show="{{loading}}" />
 <view class="page-container">
   <view class="header">
-    <text class="title">{{title}}</text>
-    <text class="subtitle">共 {{list.length}} 人报名</text>
+    <view class="header-row">
+      <view>
+        <text class="title">{{title}}</text>
+        <text class="subtitle">共 {{list.length}} 人报名</text>
+      </view>
+      <button class="export-btn" bindtap="exportRegistrations" loading="{{exporting}}" disabled="{{exporting}}">导出</button>
+    </view>
   </view>
 
   <scroll-view scroll-y class="list-container">
@@ -36,7 +41,7 @@
         <view class="close-btn" bindtap="hideDetail">×</view>
       </view>
       <scroll-view scroll-y class="modal-body">
-        <block wx:if="{{type === 'volunteer'}}">
+        <block wx:if="{{selectedItem.sourceCollection === 'volunteer_registrations'}}">
            <view class="info-item">
              <text class="label">姓名</text>
              <text class="value">{{selectedItem.volunteerName}}</text>
