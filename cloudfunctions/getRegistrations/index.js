@@ -7,48 +7,61 @@ cloud.init({
 
 const db = cloud.database()
 
+async function assertAdmin() {
+  const { OPENID } = cloud.getWXContext()
+  const { data } = await db.collection('users')
+    .where({ _openid: OPENID, role: 'admin' })
+    .limit(1)
+    .get()
+
+  if (!data.length) throw new Error('无管理员权限')
+}
+
+async function getAllRecords(collectionName, query) {
+  const records = []
+  const pageSize = 100
+  let skip = 0
+
+  while (true) {
+    const { data } = await db.collection(collectionName)
+      .where(query)
+      .orderBy('create_time', 'desc')
+      .skip(skip)
+      .limit(pageSize)
+      .get()
+
+    records.push(...data.map(item => ({ ...item, sourceCollection: collectionName })))
+    if (data.length < pageSize) break
+    skip += data.length
+  }
+
+  return records
+}
+
 // 云函数入口函数
 exports.main = async (event, context) => {
   try {
     console.log('getRegistrations 开始执行', event)
     
-    const { activityId, type } = event;
-    
-    let collectionName = 'registrations';
-    let query = {};
-    
-    if (type === 'volunteer') {
-        collectionName = 'volunteer_registrations';
-        if (activityId) {
-            query.task_id = activityId;
-        }
-    } else {
-        // study or default
-        collectionName = 'registrations';
-        if (activityId) {
-            query.route_id = activityId;
-        }
-    }
-    
-    console.log(`查询集合: ${collectionName}, 条件:`, query);
+    const { activityId } = event;
+    if (!activityId) return { success: false, error: '缺少活动ID' }
 
-    // 获取所有报名记录，按时间倒序排列
-    const result = await db.collection(collectionName)
-      .where(query)
-      .orderBy('create_time', 'desc')
-      .get()
-    
-    console.log(`查询成功，共找到 ${result.data.length} 条记录`);
+    await assertAdmin()
+
+    // 当前报名页统一写入 volunteer_registrations，保留 registrations 兼容历史研学报名数据。
+    const [volunteerRecords, legacyRecords] = await Promise.all([
+      getAllRecords('volunteer_registrations', { task_id: activityId }),
+      getAllRecords('registrations', { route_id: activityId })
+    ])
+    const registrations = [...volunteerRecords, ...legacyRecords]
+      .sort((a, b) => new Date(b.create_time || b.createdAt || 0) - new Date(a.create_time || a.createdAt || 0))
+
+    console.log(`查询成功，共找到 ${registrations.length} 条记录`);
     
     return {
       success: true,
       data: {
-        registrations: result.data
-      },
-      debug: {
-        collection: collectionName,
-        query: query,
-        count: result.data.length
+        registrations
       }
     }
     
@@ -59,4 +72,4 @@ exports.main = async (event, context) => {
       error: error.message
     }
   }
-} 
+}
