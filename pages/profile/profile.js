@@ -36,7 +36,7 @@ Page({
   },
 
   switchViewMode(mode) {
-    const isAdminView = mode === 'admin';
+    const isAdminView = mode === 'admin' || mode === 'publisher';
     this.setData({
       isAdminView: isAdminView
     });
@@ -87,7 +87,7 @@ Page({
       userInfo: userInfo,
       userType: userType,
       isProfileComplete: this.checkProfileComplete(userInfo),
-      isAdminView: app.globalData.viewMode === 'admin'
+      isAdminView: app.globalData.viewMode === 'admin' || app.globalData.viewMode === 'publisher'
     });
 
     // Update TabBar visibility and list
@@ -122,6 +122,22 @@ Page({
       loginState.userInfo = latestUserInfo;
       loginState.userType = latestUserInfo.role;
       wx.setStorageSync('loginState', loginState);
+
+      // 强制校验：如果已经登录的用户缺少手机号或姓名，强制弹出补充信息的弹窗
+      const hasName = (latestUserInfo.nickName && latestUserInfo.nickName !== '微信用户') || latestUserInfo.name;
+      const hasPhone = !!latestUserInfo.phoneNumber;
+
+      if (!hasName || !hasPhone) {
+        this.setData({
+          showLoginModal: true,
+          tempUserInfo: {
+            avatarUrl: latestUserInfo.avatarUrl || '',
+            nickName: latestUserInfo.name || (latestUserInfo.nickName === '微信用户' ? '' : latestUserInfo.nickName) || '',
+            phoneNumber: latestUserInfo.phoneNumber || ''
+          }
+        });
+        wx.showToast({ title: '系统升级，请补充个人信息', icon: 'none' });
+      }
 
       console.log('Fetched latest user info:', latestUserInfo);
       console.log('Profile complete:', this.checkProfileComplete(latestUserInfo));
@@ -159,24 +175,29 @@ Page({
         if (res.result && res.result.success) {
           const userInfo = res.result.userInfo;
 
-          // 判断用户是否已经填写过真实姓名（非默认 '微信用户'）或已有 name 字段
-          // 如果已填写，直接登录
-          if ((userInfo.nickName && userInfo.nickName !== '微信用户') || userInfo.name) {
+          const hasName = (userInfo.nickName && userInfo.nickName !== '微信用户') || userInfo.name;
+          const hasPhone = !!userInfo.phoneNumber;
+          
+          if (hasName && hasPhone) {
             this.updateLoginState(userInfo);
             wx.showToast({ title: '欢迎回来', icon: 'success' });
           } else {
-            // 未填写过信息，显示弹窗
+            // 未填写过信息或缺失手机号，显示弹窗
             this.setData({
               showLoginModal: true,
               tempUserInfo: {
                 avatarUrl: userInfo.avatarUrl || '',
-                nickName: userInfo.nickName === '微信用户' ? '' : userInfo.nickName
+                nickName: userInfo.name || (userInfo.nickName === '微信用户' ? '' : userInfo.nickName) || '',
+                phoneNumber: userInfo.phoneNumber || ''
               }
             });
+            if (!hasPhone && hasName) {
+              wx.showToast({ title: '请补充手机号信息', icon: 'none' });
+            }
           }
         } else {
           // 异常情况，降级显示弹窗
-          this.setData({ showLoginModal: true, tempUserInfo: { avatarUrl: '', nickName: '' } });
+          this.setData({ showLoginModal: true, tempUserInfo: { avatarUrl: '', nickName: '', phoneNumber: '' } });
         }
       },
       fail: (err) => {
@@ -205,8 +226,14 @@ Page({
     });
   },
 
+  onPhoneInput(e) {
+    this.setData({
+      'tempUserInfo.phoneNumber': e.detail.value
+    });
+  },
+
   submitLogin: function () {
-    const { avatarUrl, nickName } = this.data.tempUserInfo;
+    const { avatarUrl, nickName, phoneNumber } = this.data.tempUserInfo;
 
     if (!nickName || !nickName.trim()) {
       wx.showToast({
@@ -216,22 +243,37 @@ Page({
       return;
     }
 
+    if (!phoneNumber || !phoneNumber.trim()) {
+      wx.showModal({
+        title: '提示',
+        content: '我们需要通过手机号联系您关于活动参与，务必填写',
+        showCancel: false
+      });
+      return;
+    }
+
+    if (phoneNumber.trim().length !== 11) {
+      wx.showToast({ title: '手机号必须为11位', icon: 'none' });
+      return;
+    }
+
     // 如果没有选择头像，使用默认头像（这里传空字符串，云函数会处理）
     // 调用云函数进行登录
-    this.doCloudLogin(avatarUrl, nickName);
+    this.doCloudLogin(avatarUrl, nickName, phoneNumber);
   },
 
   /**
    * 调用云函数进行真实的登录/注册
    */
-  doCloudLogin: function (avatarUrl, nickName) {
+  doCloudLogin: function (avatarUrl, nickName, phoneNumber) {
     wx.showLoading({ title: '登录中...' });
 
     wx.cloud.callFunction({
       name: 'quick-login',
       data: {
         avatarUrl,
-        nickName
+        nickName,
+        phoneNumber
       },
       success: (res) => {
         wx.hideLoading();
@@ -332,6 +374,13 @@ Page({
       url: '/pages/admin-banners/admin-banners'
     })
   },
+  
+  goToUserManagement() {
+    wx.navigateTo({
+      url: '/pages/admin-users/admin-users'
+    })
+  },
+  
   handleGetPhoneNumber: function (e) {
     if (e.detail.errMsg !== 'getPhoneNumber:ok') {
       wx.showToast({
@@ -414,7 +463,7 @@ Page({
   showAboutUs: function () {
     wx.showModal({
       title: '关于我们',
-      content: '和美共益（杭州）文化科技有限公司',
+      content: '和美公益（杭州）文化科技有限公司',
       showCancel: false,
       confirmText: '知道了',
       confirmColor: '#A62F39'

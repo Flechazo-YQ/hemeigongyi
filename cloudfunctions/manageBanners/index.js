@@ -9,7 +9,7 @@ const db = cloud.database()
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const { action, url, link, title, subtitle, id } = event
+  const { action, url, link, title, subtitle, tag, id } = event
   const wxContext = cloud.getWXContext()
 
   try {
@@ -57,6 +57,7 @@ exports.main = async (event, context) => {
           link,
           title: title || '',
           subtitle: subtitle || '',
+          tag: tag || '往期精彩',
           create_time: new Date()
         }
       })

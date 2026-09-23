@@ -1,0 +1,112 @@
+<!--pages/admin-users/admin-users.wxml-->
+<view class="admin-users-page-container">
+  
+  <!-- 顶部玻璃态搜索区 -->
+  <view class="header-section">
+    <view class="search-box">
+      <icon class="search-icon" type="search" size="16" color="#999"></icon>
+      <input class="search-input" placeholder="搜索姓名或手机号" placeholder-class="ph-style" value="{{searchKeyword}}" bindinput="onSearchInput" bindconfirm="onSearch" confirm-type="search"/>
+      <icon wx:if="{{searchKeyword}}" class="clear-icon" type="clear" size="16" color="#ccc" bindtap="clearSearch"></icon>
+    </view>
+  </view>
+
+  <!-- 现代化分段控制器 (Segmented Control) -->
+  <view class="segment-container">
+    <view class="segment-box">
+      <view class="segment-item {{currentTab === 'admins' ? 'active' : ''}}" data-tab="admins" bindtap="switchTab">管理与发布</view>
+      <view class="segment-item {{currentTab === 'all' ? 'active' : ''}}" data-tab="all" bindtap="switchTab">全部用户</view>
+      <view class="segment-slider" style="transform: translateX({{currentTab === 'admins' ? '0' : '100%'}})"></view>
+    </view>
+  </view>
+
+  <view class="loading-wrap" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+
+  <view class="content-wrapper" wx:else>
+    <!-- 搜索结果视图 -->
+    <view class="content-view" wx:if="{{isSearching}}">
+      <view class="group-title" wx:if="{{searchResults.length > 0}}">搜索结果</view>
+      <view class="empty-state" wx:if="{{searchResults.length === 0}}">
+        <image class="empty-icon" src="/images/search.svg"></image>
+        <text>没有找到相关用户</text>
+      </view>
+      
+      <view class="card-list">
+        <block wx:for="{{searchResults}}" wx:key="_id">
+          <view class="user-card" hover-class="card-hover" bindtap="onUserClick" data-user="{{item}}">
+            <image class="avatar" src="{{item.avatarUrl || '/images/morentouxiang.svg'}}" mode="aspectFill"></image>
+            <view class="user-info">
+              <view class="name-row">
+                <text class="name">{{item.name || item.nickName || '微信用户'}}</text>
+                <view class="role-badge role-{{item.role}}">{{item.role === 'admin' ? '管理员' : (item.role === 'publisher' ? '发布者' : '普通用户')}}</view>
+              </view>
+              <text class="phone">{{item.phoneNumber || '未绑定手机'}}</text>
+            </view>
+            <view class="action-arrow">❯</view>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 现有管理员/发布者视图 -->
+    <view class="content-view" wx:elif="{{currentTab === 'admins'}}">
+      <view class="empty-state" wx:if="{{managementUsers.length === 0}}">
+        <image class="empty-icon" src="/images/profile-active.svg"></image>
+        <text>暂无管理员或发布者</text>
+      </view>
+      
+      <view class="card-list">
+        <block wx:for="{{managementUsers}}" wx:key="_id">
+          <view class="user-card" hover-class="card-hover" bindtap="onUserClick" data-user="{{item}}">
+            <image class="avatar" src="{{item.avatarUrl || '/images/morentouxiang.svg'}}" mode="aspectFill"></image>
+            <view class="user-info">
+              <view class="name-row">
+                <text class="name">{{item.name || item.nickName || '微信用户'}}</text>
+                <view class="role-badge role-{{item.role}}">{{item.role === 'admin' ? '管理员' : '发布者'}}</view>
+              </view>
+              <text class="phone">{{item.phoneNumber || '未绑定手机'}}</text>
+            </view>
+            <view class="action-arrow">❯</view>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 所有用户 A-Z 视图 -->
+    <view class="content-view" wx:elif="{{currentTab === 'all'}}">
+      <scroll-view scroll-y class="az-scroll" scroll-into-view="{{intoViewId}}" scroll-with-animation="true">
+        <view class="empty-state" wx:if="{{allUsersGroups.length === 0}}">
+          <image class="empty-icon" src="/images/activities.svg"></image>
+          <text>暂无注册用户</text>
+        </view>
+
+        <block wx:for="{{allUsersGroups}}" wx:key="letter" wx:for-item="group">
+          <view class="alpha-group-title" id="group-{{group.letter === '#' ? 'other' : group.letter}}">{{group.letter}}</view>
+          <view class="card-list">
+            <block wx:for="{{group.users}}" wx:key="_id" wx:for-item="user">
+              <view class="user-card" hover-class="card-hover" bindtap="onUserClick" data-user="{{user}}">
+                <image class="avatar" src="{{user.avatarUrl || '/images/morentouxiang.svg'}}" mode="aspectFill"></image>
+                <view class="user-info">
+                  <view class="name-row">
+                    <text class="name">{{user.name || user.nickName || '微信用户'}}</text>
+                    <view wx:if="{{user.role !== 'user'}}" class="role-badge role-{{user.role}}">{{user.role === 'admin' ? '管理员' : '发布者'}}</view>
+                  </view>
+                  <text class="phone">{{user.phoneNumber || '未绑定手机'}}</text>
+                </view>
+                <view class="action-arrow">❯</view>
+              </view>
+            </block>
+          </view>
+        </block>
+        <view class="bottom-placeholder"></view>
+      </scroll-view>
+
+      <!-- 侧边字母导航栏 -->
+      <view class="alphabet-nav">
+        <view class="alpha-item" wx:for="{{alphabet}}" wx:key="*this" data-letter="{{item}}" bindtap="scrollToLetter">{{item}}</view>
+      </view>
+    </view>
+  </view>
+</view>

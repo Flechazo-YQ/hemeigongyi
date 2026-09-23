@@ -35,6 +35,12 @@
           <view class="card-arrow">
             <text class="arrow-icon">></text>
           </view>
+
+          <!-- 操作按钮区 -->
+          <view class="card-footer">
+            <view class="action-btn edit-btn" catchtap="goToEdit" data-id="{{item._id}}" data-type="{{item.type || (currentTab === 0 ? 'volunteer' : 'study')}}">编辑</view>
+            <view class="action-btn delete-btn" catchtap="deleteActivity" data-id="{{item._id}}" data-type="{{item.type || (currentTab === 0 ? 'volunteer' : 'study')}}">删除</view>
+          </view>
         </view>
       </block>
       

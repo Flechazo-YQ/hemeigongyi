@@ -1,192 +1,280 @@
-.container {
-  padding: 20rpx;
-  padding-bottom: 120rpx;
+/* 全局设定防溢出 */
+page {
+  background-color: #f7f8fa;
+  box-sizing: border-box;
 }
 
+view, text, scroll-view {
+  box-sizing: border-box;
+}
+
+.page-container {
+  padding: 30rpx;
+  padding-bottom: 200rpx; /* 留出底部按钮空间 */
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+/* 头部 */
 .header {
-  margin-bottom: 30rpx;
+  margin-bottom: 40rpx;
 }
-
 .title {
-  font-size: 36rpx;
+  font-size: 40rpx;
   font-weight: bold;
-  display: block;
+  color: #333;
 }
-
 .subtitle {
-  font-size: 24rpx;
-  color: #666;
+  font-size: 26rpx;
+  color: #888;
   margin-top: 10rpx;
-  display: block;
 }
 
+/* 卡片列表 */
 .banner-list {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
+  gap: 30rpx;
 }
 
-.banner-item {
-  background: #fff;
-  border-radius: 12rpx;
+.banner-card {
+  background-color: #fff;
+  border-radius: 20rpx;
   overflow: hidden;
-  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 30rpx;
 }
 
-.banner-img {
+.banner-image {
   width: 100%;
-  height: 300rpx;
-  background: #eee;
+  height: 340rpx;
+  background-color: #e9e9e9;
+  display: block; /* 消除底部空隙 */
 }
 
-.banner-info {
-  padding: 24rpx;
+.banner-content {
+  padding: 30rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.banner-text-box {
   display: flex;
   flex-direction: column;
-  gap: 12rpx;
+  gap: 10rpx;
+  flex: 1;
+  min-width: 0; /* 修复 flex 子元素被长文本撑破的 bug */
+  padding-right: 20rpx;
 }
 
-.banner-msg {
-  font-size: 30rpx;
+.banner-title {
+  font-size: 32rpx;
   font-weight: bold;
-  color: #333;
+  color: #222;
+}
+
+.banner-subtitle {
+  font-size: 26rpx;
+  color: #666;
 }
 
 .banner-link {
   font-size: 24rpx;
   color: #999;
+  margin-top: 8rpx;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.banner-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 10rpx;
-}
-
+/* 删除按钮 */
 .delete-btn {
+  background-color: #ffeeee;
   color: #ff4d4f;
+  font-size: 26rpx;
+  font-weight: bold;
+  padding: 12rpx 32rpx;
+  border-radius: 40rpx;
+  flex-shrink: 0;
+}
+.delete-btn:active {
+  background-color: #ffd8d8;
+}
+
+/* 内置角标 */
+.hardcoded-badge {
+  color: #888;
+  background-color: #f5f6f8;
+  font-size: 24rpx;
+  font-weight: bold;
+  padding: 12rpx 24rpx;
+  border-radius: 40rpx;
+  flex-shrink: 0;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+  color: #bbb;
   font-size: 28rpx;
-  padding: 10rpx 20rpx;
-  border: 1rpx solid #ff4d4f;
-  border-radius: 8rpx;
 }
 
-.no-data {
-  text-align: center;
-  color: #999;
-  margin-top: 100rpx;
-}
-
-.add-btn-wrapper {
+/* 底部悬浮按钮 */
+.add-button-area {
   position: fixed;
-  bottom: 40rpx;
+  bottom: 0;
   left: 0;
-  width: 100%;
-  padding: 0 40rpx;
-  box-sizing: border-box;
+  width: 100vw;
+  padding: 30rpx 40rpx 60rpx 40rpx;
+  background: linear-gradient(to top, rgba(247,248,250,1) 60%, rgba(247,248,250,0));
+  z-index: 100;
 }
 
-.add-btn {
-  background: #A62F39;
-  color: #fff;
+.add-button-primary {
+  background-color: #A62F39;
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: bold;
   border-radius: 50rpx;
-  box-shadow: 0 8rpx 24rpx rgba(166, 47, 57, 0.3);
+  height: 90rpx;
+  line-height: 90rpx;
+  box-shadow: 0 10rpx 20rpx rgba(166, 47, 57, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.add-icon {
+  font-size: 40rpx;
+  margin-right: 10rpx;
+  margin-top: -4rpx;
+}
+.add-button-primary:active {
+  transform: scale(0.98);
+  opacity: 0.9;
 }
 
-/* Modal */
+/* 弹窗 */
 .modal-mask {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
+  justify-content: center;
+  z-index: 999;
 }
 
-.modal-content {
-  width: 600rpx;
-  background: #fff;
-  border-radius: 16rpx;
-  padding: 30rpx;
-}
-
-.modal-header {
-  font-size: 32rpx;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 30rpx;
-}
-
-.form-item {
-  margin-bottom: 30rpx;
-}
-
-.label {
-  display: block;
-  font-size: 28rpx;
-  margin-bottom: 10rpx;
-  color: #333;
-}
-
-.upload-box {
-  width: 100%;
-  height: 300rpx;
-  background: #f5f5f5;
-  border-radius: 8rpx;
+.modal-card {
+  width: 85vw;
+  max-height: 85vh;
+  background-color: #ffffff;
+  border-radius: 24rpx;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   overflow: hidden;
 }
 
-.upload-placeholder {
+.modal-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  text-align: center;
+  padding: 40rpx 0 20rpx 0;
+  color: #222;
+}
+
+.modal-scroll {
+  padding: 0 40rpx;
+  max-height: 50vh;
+}
+
+.form-group {
+  margin-bottom: 30rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  color: #555;
+  margin-bottom: 12rpx;
+  font-weight: 500;
+}
+
+.form-input {
+  background-color: #f5f6f8;
+  height: 80rpx;
+  border-radius: 12rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.image-uploader {
+  background-color: #f5f6f8;
+  height: 260rpx;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.upload-prompt {
   display: flex;
   flex-direction: column;
   align-items: center;
   color: #999;
+  font-size: 26rpx;
 }
 
-.plus {
+.upload-plus {
   font-size: 60rpx;
+  color: #ccc;
   margin-bottom: 10rpx;
 }
 
-.preview-img {
+.uploaded-image {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
-.input {
-  background: #f5f5f5;
-  padding: 20rpx;
-  border-radius: 8rpx;
-  font-size: 28rpx;
-}
-
-.modal-footer {
+.modal-actions {
   display: flex;
-  gap: 20rpx;
-  margin-top: 40rpx;
+  border-top: 1rpx solid #eee;
+  height: 100rpx;
 }
 
-.btn {
+.btn-cancel, .btn-confirm {
   flex: 1;
-  font-size: 28rpx;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-cancel::after, .btn-confirm::after {
+  border: none;
 }
 
-.cancel {
-  background: #f5f5f5;
+.btn-cancel {
   color: #666;
+  border-right: 1rpx solid #eee;
 }
 
-.confirm {
-  background: #A62F39;
-  color: #fff;
+.btn-confirm {
+  color: #A62F39;
+  font-weight: bold;
+}
+.btn-cancel:active, .btn-confirm:active {
+  background-color: #f9f9f9;
 }

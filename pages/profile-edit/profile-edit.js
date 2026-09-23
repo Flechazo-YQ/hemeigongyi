@@ -138,7 +138,16 @@ Page({
       return;
     }
     if (!userInfo.phoneNumber) {
-      wx.showToast({ title: '请填写手机号', icon: 'none' });
+      wx.showModal({
+        title: '提示',
+        content: '我们需要通过手机号联系您关于活动参与，务必填写',
+        showCancel: false
+      });
+      return;
+    }
+
+    if (String(userInfo.phoneNumber).trim().length !== 11) {
+      wx.showToast({ title: '手机号必须为11位', icon: 'none' });
       return;
     }
 

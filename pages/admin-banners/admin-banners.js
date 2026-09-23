@@ -8,11 +8,18 @@ Page({
     tempImgUrl: '',
     tempLink: '',
     tempTitle: '',
-    tempSubtitle: ''
+    tempSubtitle: '',
+    tempTag: ''
   },
 
   onLoad() {
     this.loadBanners();
+  },
+
+  goToExperience() {
+    wx.navigateTo({
+      url: `/pages/webview/webview?url=${encodeURIComponent('http://huixintongxue.com/')}`
+    });
   },
 
   loadBanners() {
@@ -22,7 +29,53 @@ Page({
       data: { action: 'get' },
       success: res => {
         if (res.result && res.result.data) {
-          this.setData({ banners: res.result.data });
+          let dbBanners = [...res.result.data];
+          let finalBanners = [];
+
+          // 提取人墙图片
+          let humanWallUrl = '';
+          let hwIndex = dbBanners.findIndex(item => 
+            (item.link && item.link.includes('hangzhouredcross')) || 
+            (item.title && item.title.includes('人墙'))
+          );
+          if (hwIndex === -1 && dbBanners.length > 0) {
+            hwIndex = dbBanners.length - 1;
+          }
+          if (hwIndex !== -1) {
+            humanWallUrl = dbBanners.splice(hwIndex, 1)[0].url;
+          }
+
+          // 添加首位固定
+          if (humanWallUrl) {
+            finalBanners.push({
+              _id: 'sys_human_wall',
+              url: humanWallUrl,
+              title: '最美人墙',
+              subtitle: '红十字志愿服务',
+              tag: '往期精彩',
+              link: 'https://web.hangzhouredcross.org/news/gequxianxinwen/9561.html',
+              isHardcoded: true
+            });
+          }
+
+          // 添加中间动态项
+          finalBanners = finalBanners.concat(dbBanners);
+
+          // 添加末位固定
+          finalBanners.push({
+            _id: 'sys_sandbox',
+            url: '/images/sandbox_poster.jpg',
+            title: '绘心同学',
+            subtitle: '点击探索筑境心语',
+            tag: '特别推荐',
+            link: 'https://huixintongxue.com',
+            isHardcoded: true
+          });
+
+          this.setData({ banners: finalBanners });
+        } else {
+          // In case of unexpected result format from cloud function
+          console.error("Unexpected result from cloud function:", res);
         }
       },
       fail: err => {
@@ -40,8 +93,10 @@ Page({
       showModal: true,
       tempImgUrl: '',
       tempLink: '',
+      tempLink: '',
       tempTitle: '',
-      tempSubtitle: ''
+      tempSubtitle: '',
+      tempTag: ''
     });
   },
 
@@ -75,8 +130,12 @@ Page({
     this.setData({ tempSubtitle: e.detail.value });
   },
 
+  inputTag(e) {
+    this.setData({ tempTag: e.detail.value });
+  },
+
   submitBanner() {
-    const { tempImgUrl, tempLink, tempTitle, tempSubtitle } = this.data;
+    const { tempImgUrl, tempLink, tempTitle, tempSubtitle, tempTag } = this.data;
     if (!tempImgUrl) {
       wx.showToast({ title: '请上传图片', icon: 'none' });
       return;
@@ -101,7 +160,8 @@ Page({
             url: fileID,
             link: tempLink,
             title: tempTitle,
-            subtitle: tempSubtitle
+            subtitle: tempSubtitle,
+            tag: tempTag
           },
           success: dbRes => {
             this.hideAddModal();

@@ -37,6 +37,10 @@ exports.main = async (event, context) => {
         updateData.avatarUrl = event.avatarUrl
         userInfo.avatarUrl = event.avatarUrl // 更新返回对象
       }
+      if (event.phoneNumber) {
+        updateData.phoneNumber = event.phoneNumber
+        userInfo.phoneNumber = event.phoneNumber
+      }
 
       await usersCollection.doc(userInfo._id).update({
         data: updateData
@@ -48,6 +52,7 @@ exports.main = async (event, context) => {
         _openid: openid,
         nickName: event.nickName || '微信用户',
         avatarUrl: event.avatarUrl || '',
+        phoneNumber: event.phoneNumber || '',
         role: 'user', // 默认角色
         createTime: db.serverDate(),
         lastLoginTime: db.serverDate()

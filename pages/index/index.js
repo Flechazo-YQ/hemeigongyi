@@ -17,6 +17,8 @@ Page({
     showEntrance: false, // 触发全局瀑布流入场动画
     searchFocused: false, // 搜索栏浮起状态
     isAuthorized: false, // 是否已授权访问首页
+    showBrowserGuide: false, // 是否显示外部链接引导
+    currentExternalLink: '', // 当前的外部链接
   },
 
   onLoad() {
@@ -67,13 +69,85 @@ Page({
       name: 'manageBanners',
       data: { action: 'get' },
       success: res => {
-        if (res.result && res.result.data && res.result.data.length > 0) {
-          this.setData({ banners: res.result.data });
+        let dbBanners = [];
+        if (res.result && res.result.data) {
+          dbBanners = [...res.result.data];
         }
-        // 如果没有数据，保持默认的 banners (在 data 中定义)
+
+        let finalBanners = [];
+
+        // 1. 写死的第一张：最美人墙
+        let humanWallUrl = '';
+        
+        // 寻找具有特定外链（或者之前没标题的老数据），这就是人墙的原图
+        let hwIndex = dbBanners.findIndex(item => 
+          (item.link && item.link.includes('hangzhouredcross')) || 
+          (item.title && item.title.includes('人墙'))
+        );
+
+        if (hwIndex === -1 && dbBanners.length > 0) {
+           // 最后的降级方案：如果连外链都找不到，就把最老的一张当作人墙
+           hwIndex = dbBanners.length - 1;
+        }
+
+        if (hwIndex !== -1) {
+          humanWallUrl = dbBanners.splice(hwIndex, 1)[0].url; 
+        }
+
+        // 只有成功提取到了图片链接，才生成这第一张写死的卡片
+        if (humanWallUrl) {
+          finalBanners.push({
+            type: 'image',
+            url: humanWallUrl,
+            link: 'https://web.hangzhouredcross.org/news/gequxianxinwen/9561.html',
+            title: '最美人墙',
+            subtitle: '红十字志愿服务',
+            tag: '往期精彩'
+          });
+        }
+
+        // 2. 中间动态添加的轮播图（第二、三、四章...由管理员通过后台添加）
+        finalBanners = finalBanners.concat(dbBanners);
+
+        // 3. 写死的最后一张：绘心同学
+        finalBanners.push({
+          type: 'image',
+          url: '/images/sandbox_poster.jpg',
+          link: 'https://huixintongxue.com',
+          title: '绘心同学',
+          subtitle: '点击探索筑境心语',
+          tag: '特别推荐'
+        });
+
+        this.setData({ 
+          banners: finalBanners,
+          swiperCurrent: 0 
+        });
       },
       fail: err => {
         console.error('获取 Banner 失败', err);
+        // 如果失败了，至少保证第一张和最后一张能显示
+        this.setData({
+          banners: [
+            {
+              type: 'image',
+              url: '', 
+              link: 'https://web.hangzhouredcross.org/news/gequxianxinwen/9561.html',
+              title: '最美人墙',
+              subtitle: '红十字志愿服务',
+              tag: '往期精彩'
+            },
+            {
+              type: 'image',
+              url: '/images/sandbox_poster.jpg',
+              link: 'https://huixintongxue.com',
+              title: '绘心同学',
+              subtitle: '点击探索筑境心语',
+              tag: '特别推荐'
+            }
+          ],
+          swiperCurrent: 0
+        });
       }
     });
   },
@@ -242,10 +316,44 @@ Page({
     }
     const link = e.currentTarget.dataset.link;
     if (link) {
-      wx.navigateTo({
-        url: `/pages/webview/webview?url=${encodeURIComponent(link)}`
-      });
+      if (link.includes('huixintongxue.com')) {
+        // 自己配置了业务域名，直接在小程序内跳转
+        wx.navigateTo({
+          url: `/pages/webview/webview?url=${encodeURIComponent(link)}`
+        });
+      } else {
+        // 未配置业务域名的外部链接依然弹出引导
+        this.setData({
+          showBrowserGuide: true,
+          currentExternalLink: link
+        });
+      }
     }
+  },
+
+  closeBrowserGuide() {
+    this.setData({
+      showBrowserGuide: false,
+      currentExternalLink: ''
+    });
+  },
+
+  copyExternalLink() {
+    const link = this.data.currentExternalLink;
+    wx.setClipboardData({
+      data: link,
+      success: () => {
+        wx.showToast({
+          title: '链接已复制',
+          icon: 'success'
+        });
+        this.closeBrowserGuide();
+      }
+    });
+  },
+
+  preventBubbling() {
+    // 防止点击穿透
   },
 
   onSwiperChange(e) {
@@ -268,5 +376,20 @@ Page({
       current = current === len - 1 ? 0 : current + 1;
       this.setData({ swiperCurrent: current });
     }
+  },
+
+  // 分享给朋友
+  onShareAppMessage() {
+    return {
+      title: '青椒童行研学 - 和美公益',
+      path: '/pages/index/index'
+    };
+  },
+
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: '青椒童行研学 - 和美公益'
+    };
   }
 });

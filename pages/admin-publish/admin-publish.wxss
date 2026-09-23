@@ -46,17 +46,18 @@ page {
 .input {
   background: #F5F6F8;
   border-radius: 16rpx;
-  padding: 24rpx 30rpx;
+  padding: 0 30rpx;
   font-size: 28rpx;
   color: #333;
   height: 88rpx;
+  line-height: 88rpx;
   box-sizing: border-box;
 }
 
 .static-value {
   background: #F5F6F8;
   border-radius: 16rpx;
-  padding: 24rpx 30rpx;
+  padding: 0 30rpx;
   font-size: 28rpx;
   color: #666;
   height: 88rpx;
@@ -67,7 +68,7 @@ page {
 .picker-view {
   background: #F5F6F8;
   border-radius: 16rpx;
-  padding: 24rpx 30rpx;
+  padding: 0 30rpx;
   font-size: 28rpx;
   color: #333;
   height: 88rpx;
@@ -222,4 +223,3 @@ page {
 .date-picker, .time-picker {
   width: 100%;
 }
-

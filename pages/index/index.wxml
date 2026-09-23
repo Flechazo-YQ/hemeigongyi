@@ -2,12 +2,12 @@
   <!-- 自定义导航栏 -->
   <view class="custom-nav" style="height:{{navHeight}}px; padding-top:{{statusBarHeight}}px;">
     <view class="nav-content" style="top:{{navTop}}px; left:{{navLeft}}px;">
-      <text class="nav-brand">和美共益</text>
+      <text class="nav-brand">和美公益</text>
     </view>
   </view>
 
   <view class="swiper-wrapper {{showEntrance ? 'entrance-fade-in' : 'initial-state'}}" style="margin-top: 30rpx; animation-delay: 0ms;">
-    <swiper class="banner-swiper" indicator-dots="{{false}}" autoplay="true" interval="5000" duration="500" circular="true" current="{{swiperCurrent}}" bindchange="onSwiperChange">
+    <swiper class="banner-swiper" indicator-dots="{{false}}" autoplay="true" interval="5000" duration="500" circular="{{banners.length > 1}}" bindchange="onSwiperChange">
       <block wx:for="{{banners}}" wx:key="url">
         <swiper-item>
           <view class="slide-container" bindtap="onBannerTap" data-link="{{item.link}}">
@@ -140,5 +140,25 @@
         <button class="cancel-btn" bindtap="closeSignup">取消</button>
       </view>
     </form>
+  </view>
+</view>
+
+<!-- 外部链接引导弹窗 -->
+<view wx:if="{{showBrowserGuide}}" class="browser-guide-overlay" catchtap="closeBrowserGuide" catchtouchmove="preventBubbling">
+  <view class="browser-guide-modal" catchtap="preventBubbling">
+    <view class="guide-header">
+      <text class="guide-title">外部链接访问</text>
+    </view>
+    <view class="guide-content">
+      <view class="guide-icon">🌐</view>
+      <view class="guide-text">由于微信环境安全限制，该网页无法直接打开。请复制下方链接后，在手机自带浏览器中粘贴访问：</view>
+      <view class="guide-link-box">
+        <text class="guide-link-text" user-select="true">{{currentExternalLink}}</text>
+      </view>
+    </view>
+    <view class="guide-actions">
+      <view class="guide-btn btn-cancel" catchtap="closeBrowserGuide">取消</view>
+      <view class="guide-btn btn-confirm" catchtap="copyExternalLink">复制链接并去浏览器</view>
+    </view>
   </view>
 </view>

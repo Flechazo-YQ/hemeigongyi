@@ -193,5 +193,20 @@ Page({
     wx.navigateTo({
       url: `/pages/activity-detail/activity-detail?id=${id}`
     });
+  },
+
+  // 分享给朋友
+  onShareAppMessage() {
+    return {
+      title: '青椒童行研学 - 发现最新活动',
+      path: '/pages/all-activities/all-activities'
+    };
+  },
+
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: '青椒童行研学 - 发现最新活动'
+    };
   }
 });

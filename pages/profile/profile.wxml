@@ -5,9 +5,9 @@
     <!-- 顶部统一卡片区域 -->
     <view class="top-card-wrap entrance-fade-in">
       <view class="user-header-new" bindtap="{{isLogin ? 'handleEditProfile' : 'handleLogin'}}" hover-class="hover-click">
-        <!-- 管理员切换视图按钮 -->
+        <!-- 管理员/发布者切换视图按钮 -->
         <image 
-          wx:if="{{isLogin && userType === 'admin'}}" 
+          wx:if="{{isLogin && (userType === 'admin' || userType === 'publisher')}}" 
           class="admin-toggle-btn-top" 
           src="/images/change_admin_user.svg" 
           catchtap="toggleAdminView"
@@ -19,8 +19,8 @@
         <view class="user-main-info">
           <view class="name-row-new" wx:if="{{isLogin}}">
             <text class="nickname-new {{!(userInfo.nickName || userInfo.name) ? 'name-placeholder' : ''}}">{{userInfo.nickName || userInfo.name || '请设置姓名'}}</text>
-            <view class="badge-role {{userType === 'admin' ? 'badge-role-admin' : ''}}">
-              {{userType === 'admin' ? '管理员' : '普通用户'}}
+            <view class="badge-role {{(userType === 'admin' || userType === 'publisher') ? 'badge-role-admin' : ''}}">
+              {{userType === 'admin' ? '管理员' : (userType === 'publisher' ? '发布者' : '普通用户')}}
             </view>
           </view>
           <view class="name-row-new" wx:else>
@@ -36,8 +36,8 @@
     </view>
 
     <view class="content-body-new">
-      <!-- 管理员功能面板 -->
-      <view class="menu-list-new" wx:if="{{userType === 'admin' && isAdminView}}">
+      <!-- 管理员/发布者功能面板 -->
+      <view class="menu-list-new" wx:if="{{(userType === 'admin' || userType === 'publisher') && isAdminView}}">
         <view class="menu-group-title-new">管理面板</view>
         
         <view class="menu-card-new" hover-class="card-hover" bindtap="goToPublishVolunteer">
@@ -78,6 +78,17 @@
               <image src="/images/picture.svg" class="svg-icon-red"></image>
             </view>
             <text class="menu-label-new">往期精彩设置</text>
+          </view>
+          <view class="card-arrow">❯</view>
+        </view>
+
+        <!-- 仅管理员可见：人员管理 -->
+        <view class="menu-card-new" hover-class="card-hover" bindtap="goToUserManagement" wx:if="{{userType === 'admin'}}">
+          <view class="menu-inner">
+            <view class="icon-wrap icon-bg-pink">
+              <image src="/images/profile-active.svg" class="svg-icon-red"></image>
+            </view>
+            <text class="menu-label-new">人员管理</text>
           </view>
           <view class="card-arrow">❯</view>
         </view>
@@ -143,6 +154,11 @@
         <view class="input-container">
           <view class="label">真实姓名</view>
           <input type="nickname" class="name-input" placeholder="请输入真实姓名" placeholder-class="input-placeholder" value="{{tempUserInfo.nickName}}" bindinput="onNameInput" />
+        </view>
+        
+        <view class="input-container">
+          <view class="label">手机号码</view>
+          <input type="number" class="name-input" placeholder="请输入手机号码" placeholder-class="input-placeholder" value="{{tempUserInfo.phoneNumber}}" bindinput="onPhoneInput" maxlength="11" />
         </view>
       </view>
       <view class="modal-footer">

@@ -96,5 +96,41 @@ Page({
     wx.navigateTo({
       url: `/pages/admin-activity-registrations/admin-activity-registrations?id=${id}&type=${type}&title=${title}`
     });
+  },
+
+  goToEdit(e) {
+    const { id, type } = e.currentTarget.dataset;
+    wx.navigateTo({
+      url: `/pages/admin-publish/admin-publish?id=${id}&type=${type}`
+    });
+  },
+
+  deleteActivity(e) {
+    const { id, type } = e.currentTarget.dataset;
+    wx.showModal({
+      title: '提示',
+      content: '确定要删除该活动吗？',
+      success: (res) => {
+        if (res.confirm) {
+          wx.showLoading({ title: '删除中...' });
+          wx.cloud.callFunction({
+            name: 'deleteActivity',
+            data: { id, type }
+          }).then(res => {
+            wx.hideLoading();
+            if (res.result && res.result.success) {
+              wx.showToast({ title: '删除成功', icon: 'success' });
+              this.loadData();
+            } else {
+              wx.showToast({ title: res.result.error || '删除失败', icon: 'none' });
+            }
+          }).catch(err => {
+            wx.hideLoading();
+            console.error(err);
+            wx.showToast({ title: '删除失败', icon: 'none' });
+          });
+        }
+      }
+    });
   }
 })

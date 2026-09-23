@@ -15,7 +15,8 @@
     "pages/signup-success/signup-success",
     "pages/webview/webview",
     "pages/admin-banners/admin-banners",
-    "pages/my-activities/my-activities"
+    "pages/my-activities/my-activities",
+    "pages/admin-users/admin-users"
   ],
   "window": {
     "backgroundTextStyle": "light",

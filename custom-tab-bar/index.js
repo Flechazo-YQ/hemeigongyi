@@ -23,7 +23,7 @@ Component({
       const userType = app.globalData.userType || 'user' // Default to user
       // Use viewMode if set, otherwise fallback to userType
       const currentMode = app.globalData.viewMode || userType;
-      const list = currentMode === 'admin' ? app.globalData.adminTabBarList : app.globalData.userTabBarList
+      const list = (currentMode === 'admin' || currentMode === 'publisher') ? app.globalData.adminTabBarList : app.globalData.userTabBarList
       this.setData({
         list,
         show: true // 永远显示导航栏，起到预览作用
