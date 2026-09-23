@@ -1,0 +1,10 @@
+{
+  "name": "exportToExcel",
+  "version": "1.0.0",
+  "description": "导出活动报名信息为 Excel",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "jszip": "^3.10.1"
+  }
+}

@@ -7,10 +7,20 @@ cloud.init({
 
 const db = cloud.database()
 
+async function assertAdmin() {
+  const { OPENID } = cloud.getWXContext()
+  const { data } = await db.collection('users')
+    .where({ _openid: OPENID, role: 'admin' })
+    .limit(1)
+    .get()
+
+  if (!data.length) throw new Error('无管理员权限')
+}
+
 // 云函数入口函数
 exports.main = async (event, context) => {
   try {
-    const { id, type, status, reason } = event;
+    const { id, sourceCollection, status, reason } = event;
     
     if (!id || !status) {
       return {
@@ -19,10 +29,11 @@ exports.main = async (event, context) => {
       }
     }
     
-    let collectionName = 'registrations';
-    if (type === 'volunteer') {
-        collectionName = 'volunteer_registrations';
-    }
+    await assertAdmin()
+
+    const collectionName = sourceCollection === 'registrations'
+      ? 'registrations'
+      : 'volunteer_registrations'
     
     const res = await db.collection(collectionName).doc(id).update({
       data: {
