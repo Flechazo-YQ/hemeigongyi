@@ -80,7 +80,14 @@ Page({
             return Number.isNaN(time) ? Number.MAX_SAFE_INTEGER : time;
           };
 
-          return getDeadlineTime(first) - getDeadlineTime(second);
+          const firstDeadline = getDeadlineTime(first);
+          const secondDeadline = getDeadlineTime(second);
+
+          if (firstDeadline === Number.MAX_SAFE_INTEGER && secondDeadline === Number.MAX_SAFE_INTEGER) return 0;
+          if (firstDeadline === Number.MAX_SAFE_INTEGER) return 1;
+          if (secondDeadline === Number.MAX_SAFE_INTEGER) return -1;
+
+          return secondDeadline - firstDeadline;
         };
 
         const volunteerList = processedList
