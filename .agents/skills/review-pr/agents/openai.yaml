@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review PR"
+  short_description: "Read-only PR review including document-contract sync"
+  default_prompt: "Use $review-pr to review one data-extractor PR read-only at its current head SHA, trace frozen contracts from database facts through Java and HTTP to React, verify authoritative ordering and adversarial fixtures, keep docs/code/tests aligned, and use current-head GitHub checks for merge-readiness evidence."
