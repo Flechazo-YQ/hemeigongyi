@@ -72,9 +72,24 @@ Page({
           };
         });
 
-        const volunteerList = processedList.filter(item => item.type === 'volunteer');
+        const sortByDeadline = (first, second) => {
+          const getDeadlineTime = (item) => {
+            if (!item.deadline || item.deadline === '长期有效') return Number.MAX_SAFE_INTEGER;
+
+            const time = new Date(item.deadline.replace(/-/g, '/')).getTime();
+            return Number.isNaN(time) ? Number.MAX_SAFE_INTEGER : time;
+          };
+
+          return getDeadlineTime(first) - getDeadlineTime(second);
+        };
+
+        const volunteerList = processedList
+          .filter(item => item.type === 'volunteer')
+          .sort(sortByDeadline);
         // 研学活动可能没有 type 字段或者 type != volunteer
-        const studyList = processedList.filter(item => item.type !== 'volunteer');
+        const studyList = processedList
+          .filter(item => item.type !== 'volunteer')
+          .sort(sortByDeadline);
 
         this.setData({
           volunteerList,

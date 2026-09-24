@@ -54,3 +54,5 @@
   <!-- 底部留白，防止内容被 TabBar 遮挡 -->
   <view style="height: 120rpx;"></view>
 </view>
+
+<custom-tab-bar id="admin-tab-bar" />
