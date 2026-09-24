@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue Fixer"
+  short_description: "Fix one data-extractor GitHub issue safely"
+  default_prompt: "Use $issue-fixer to handle one data-extractor issue with claim checks, a dedicated worktree, focused validation, PR maintenance, optional local CI rehearsal, and current-head GitHub required checks as the authoritative merge test gate."
