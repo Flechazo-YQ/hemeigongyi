@@ -17,6 +17,11 @@ Component({
   },
   attached() {
     this.updateList()
+    const pages = getCurrentPages();
+    const currentPage = pages[pages.length - 1];
+    if (currentPage) {
+      this.setActiveByRoute(currentPage.route);
+    }
   },
   methods: {
     updateList() {
