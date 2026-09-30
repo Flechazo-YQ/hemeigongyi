@@ -123,6 +123,7 @@ page {
   left: 0;
 }
 
+.content-scroll,
 .az-scroll {
   height: 100%;
 }

@@ -13,6 +13,7 @@ Page({
     allUsersGroups: [],
     // A-Z 索引表
     alphabet: [],
+    intoViewId: '',
     
     // 搜索结果
     searchResults: [],
@@ -180,9 +181,8 @@ Page({
   
   scrollToLetter(e) {
     const letter = e.currentTarget.dataset.letter;
-    wx.pageScrollTo({
-      selector: `#group-${letter === '#' ? 'other' : letter}`,
-      duration: 300
+    this.setData({
+      intoViewId: `group-${letter === '#' ? 'other' : letter}`
     });
   },
 
