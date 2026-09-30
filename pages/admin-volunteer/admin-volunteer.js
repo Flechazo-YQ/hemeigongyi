@@ -37,10 +37,14 @@ Page({
         includePendingCount: true
       }
     }).then(res => {
-      let allActivities = [];
-      if (res.result && res.result.success && res.result.data && res.result.data.routes) {
-        allActivities = res.result.data.routes || [];
+      if (!res.result || !res.result.success) {
+        const error = (res.result && res.result.error) || '未知错误';
+        console.error('加载活动列表失败:', res.result);
+        wx.showToast({ title: '加载失败: ' + error, icon: 'none' });
+        return;
       }
+
+      const allActivities = (res.result.data && res.result.data.routes) || [];
 
       if (allActivities.length) {
         // 处理数据，添加状态和 Mock 的待审核数
