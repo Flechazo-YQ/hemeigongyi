@@ -15,8 +15,8 @@ async function getPendingCounts(collectionName, routeField, routeIds) {
   const { data } = await db.collection(collectionName)
     .aggregate()
     .match({
-      [routeField]: db.command.in(routeIds),
-      status: db.command.in(PENDING_STATUSES)
+      [routeField]: $.in([`$${routeField}`, routeIds]),
+      status: $.in(['$status', PENDING_STATUSES])
     })
     .group({
       _id: `$${routeField}`,
@@ -102,8 +102,14 @@ exports.main = async (event, context) => {
           .filter(route => route.type !== 'volunteer')
           .map(route => route._id)
         const [volunteerCounts, studyCounts] = await Promise.all([
-          getPendingCounts('volunteer_registrations', 'task_id', volunteerRouteIds),
-          getPendingCounts('registrations', 'route_id', studyRouteIds)
+          getPendingCounts('volunteer_registrations', 'task_id', volunteerRouteIds).catch(error => {
+            console.error('统计志愿者待审核数失败:', error)
+            return {}
+          }),
+          getPendingCounts('registrations', 'route_id', studyRouteIds).catch(error => {
+            console.error('统计研学待审核数失败:', error)
+            return {}
+          })
         ])
 
         routes = routes.map(route => {
