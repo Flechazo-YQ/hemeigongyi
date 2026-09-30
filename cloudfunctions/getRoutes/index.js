@@ -6,6 +6,29 @@ cloud.init({
 })
 
 const db = cloud.database()
+const PENDING_STATUSES = ['pending', '待处理', '待审核']
+
+async function getPendingCounts(collectionName, routeField, routeIds) {
+  if (!routeIds.length) return {}
+
+  const $ = db.command.aggregate
+  const { data } = await db.collection(collectionName)
+    .aggregate()
+    .match({
+      [routeField]: db.command.in(routeIds),
+      status: db.command.in(PENDING_STATUSES)
+    })
+    .group({
+      _id: `$${routeField}`,
+      pendingCount: $.sum(1)
+    })
+    .end()
+
+  return data.reduce((counts, item) => {
+    counts[String(item._id)] = item.pendingCount
+    return counts
+  }, {})
+}
 
 // 云函数入口函数
 exports.main = async (event, context) => {
@@ -72,24 +95,24 @@ exports.main = async (event, context) => {
       // 如果需要统计待审核数量
       if (includePendingCount) {
         console.log('开始统计待审核数量...');
-        const tasks = routes.map(async (route) => {
-            const isVolunteer = route.type === 'volunteer';
-            const collectionName = isVolunteer ? 'volunteer_registrations' : 'registrations';
-            const queryField = isVolunteer ? 'task_id' : 'route_id';
-            
-            // 查询待审核数量 (status 为 pending 或 待处理)
-            const countResult = await db.collection(collectionName).where({
-                [queryField]: route._id,
-                status: db.command.in(['pending', '待处理', '待审核'])
-            }).count();
-            
-            return {
-                ...route,
-                pendingCount: countResult.total
-            };
-        });
-        
-        routes = await Promise.all(tasks);
+        const volunteerRouteIds = routes
+          .filter(route => route.type === 'volunteer')
+          .map(route => route._id)
+        const studyRouteIds = routes
+          .filter(route => route.type !== 'volunteer')
+          .map(route => route._id)
+        const [volunteerCounts, studyCounts] = await Promise.all([
+          getPendingCounts('volunteer_registrations', 'task_id', volunteerRouteIds),
+          getPendingCounts('registrations', 'route_id', studyRouteIds)
+        ])
+
+        routes = routes.map(route => {
+          const pendingCounts = route.type === 'volunteer' ? volunteerCounts : studyCounts
+          return {
+            ...route,
+            pendingCount: pendingCounts[String(route._id)] || 0
+          }
+        })
         console.log('统计完成');
       }
 
@@ -125,4 +148,4 @@ exports.main = async (event, context) => {
       error: error.message
     }
   }
-} 
+}

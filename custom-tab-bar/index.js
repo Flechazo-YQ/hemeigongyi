@@ -66,6 +66,11 @@ Component({
         return;
       }
 
+      if (targetPath === '/pages/admin-volunteer/admin-volunteer') {
+        wx.reLaunch({ url });
+        return;
+      }
+
       wx.switchTab({
         url,
         success: () => {

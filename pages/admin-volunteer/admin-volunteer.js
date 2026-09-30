@@ -4,7 +4,8 @@ Page({
     currentTab: 0, // 0: 志愿者报名, 1: 研学报名
     volunteerList: [],
     studyList: [],
-    isRefreshing: false
+    isRefreshing: false,
+    isLoading: false
   },
 
   onShow() {
@@ -29,6 +30,7 @@ Page({
 
   loadData() {
     // 获取所有活动列表，复用已部署的 getRoutes 云函数
+    this.setData({ isLoading: true });
     return wx.cloud.callFunction({
       name: 'getRoutes',
       data: {
@@ -109,6 +111,8 @@ Page({
     }).catch(err => {
       console.error('加载活动列表失败 (catch):', err);
       wx.showToast({ title: '加载失败: ' + (err.message || err), icon: 'none' });
+    }).finally(() => {
+      this.setData({ isLoading: false });
     });
   },
 
