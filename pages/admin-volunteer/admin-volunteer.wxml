@@ -1,4 +1,6 @@
 <!-- pages/admin-volunteer/admin-volunteer.wxml -->
+<custom-loading show="{{isLoading}}" />
+
 <view class="page-container">
   <!-- 顶部 Tabs -->
   <view class="tabs">
