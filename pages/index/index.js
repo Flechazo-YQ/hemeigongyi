@@ -1,5 +1,3 @@
-const app = getApp();
-
 Page({
   data: {
     banners: [],
@@ -16,7 +14,6 @@ Page({
     navLeft: 0,
     showEntrance: false, // 触发全局瀑布流入场动画
     searchFocused: false, // 搜索栏浮起状态
-    isAuthorized: false, // 是否已授权访问首页
     showBrowserGuide: false, // 是否显示外部链接引导
     currentExternalLink: '', // 当前的外部链接
   },
@@ -44,9 +41,6 @@ Page({
   },
 
   onShow() {
-    const isLogin = app.globalData.isLogin;
-    this.setData({ isAuthorized: isLogin });
-
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().updateList();
       this.getTabBar().setActiveByRoute(this.route);
@@ -202,18 +196,9 @@ Page({
   },
 
   goToAllActivities() {
-    if (!app.globalData.isLogin) {
-      wx.showToast({ title: '请先登录', icon: 'none' });
-      wx.switchTab({ url: '/pages/profile/profile' });
-      return;
-    }
     wx.navigateTo({
       url: '/pages/all-activities/all-activities'
     });
-  },
-  forceLoginAction() {
-    wx.showToast({ title: '请先登录体验完成服务吧！', icon: 'none' });
-    wx.switchTab({ url: '/pages/profile/profile' });
   },
 
   // 搜索框交互
@@ -284,11 +269,6 @@ Page({
 
   // 跳转详情页
   goToDetail(e) {
-    if (!app.globalData.isLogin) {
-      wx.showToast({ title: '请先登录体验完成服务吧！', icon: 'none' });
-      wx.switchTab({ url: '/pages/profile/profile' });
-      return;
-    }
     const id = e.currentTarget.dataset.id;
     console.log('点击活动卡片，ID:', id);
     if (id) {
@@ -309,11 +289,6 @@ Page({
   },
 
   onBannerTap(e) {
-    if (!app.globalData.isLogin) {
-      wx.showToast({ title: '请先登录', icon: 'none' });
-      wx.switchTab({ url: '/pages/profile/profile' });
-      return;
-    }
     const link = e.currentTarget.dataset.link;
     if (link) {
       if (link.includes('huixintongxue.com')) {

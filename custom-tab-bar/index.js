@@ -47,24 +47,7 @@ Component({
       const data = e.currentTarget.dataset
       const url = data.path
 
-      // Check login status
-      const isLogin = app.globalData.isLogin;
-      // Normalize paths for comparison
       const targetPath = url.startsWith('/') ? url : '/' + url;
-      const profilePath = '/pages/profile/profile';
-      const homePath = '/pages/index/index';
-
-      if (!isLogin && targetPath !== profilePath && targetPath !== homePath) {
-        wx.showToast({
-          title: '请先登录体验完成服务吧！',
-          icon: 'none'
-        });
-        // Redirect to profile page for login
-        wx.switchTab({
-          url: profilePath
-        });
-        return;
-      }
 
       if (targetPath === '/pages/admin-volunteer/admin-volunteer') {
         wx.reLaunch({ url });

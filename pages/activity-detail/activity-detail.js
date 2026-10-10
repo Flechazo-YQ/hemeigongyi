@@ -118,6 +118,11 @@ Page({
       wx.showToast({ title: '您已报名该活动', icon: 'none' });
       return;
     }
+    if (!app.globalData.isLogin) {
+      wx.showToast({ title: '登录后即可报名', icon: 'none' });
+      wx.switchTab({ url: '/pages/profile/profile' });
+      return;
+    }
     const id = this.data.activity._id || this.data.activity.id;
     if (id) {
       wx.navigateTo({
