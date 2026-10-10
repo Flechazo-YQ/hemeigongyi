@@ -11,21 +11,25 @@ const db = cloud.database()
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const openid = wxContext.OPENID
+  const { activityId } = event
 
   try {
+    const volunteerQuery = { _openid: openid }
+    const studyQuery = { _openid: openid }
+    if (activityId) {
+      volunteerQuery.task_id = activityId
+      studyQuery.route_id = activityId
+    }
+
     // 1. 获取志愿者报名记录
     const volunteerRes = await db.collection('volunteer_registrations')
-      .where({
-        _openid: openid
-      })
+      .where(volunteerQuery)
       .orderBy('create_time', 'desc')
       .get()
 
     // 2. 获取研学报名记录
     const studyRes = await db.collection('registrations')
-      .where({
-        _openid: openid
-      })
+      .where(studyQuery)
       .orderBy('create_time', 'desc')
       .get()
 
