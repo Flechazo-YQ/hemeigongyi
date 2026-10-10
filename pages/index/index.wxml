@@ -34,32 +34,18 @@
 
   <!-- 搜索和筛选 -->
   <view class="unified-search-unit {{showEntrance ? 'entrance-fade-in' : 'initial-state'}} {{searchFocused ? 'search-unit-focused' : ''}}" style="animation-delay: 100ms;">
-    <block wx:if="{{isAuthorized}}">
-      <picker bindchange="onCategoryChange" value="{{categoryIndex}}" range="{{categories}}">
-        <view class="category-btn" hover-class="category-btn-hover">
-          <text>{{categories[categoryIndex] || '全部'}}</text>
-          <text class="arrow-tiny">▾</text>
-        </view>
-      </picker>
-    </block>
-    <block wx:else>
-      <view class="category-btn" hover-class="category-btn-hover" catchtap="forceLoginAction">
+    <picker bindchange="onCategoryChange" value="{{categoryIndex}}" range="{{categories}}">
+      <view class="category-btn" hover-class="category-btn-hover">
         <text>{{categories[categoryIndex] || '全部'}}</text>
         <text class="arrow-tiny">▾</text>
       </view>
-    </block>
+    </picker>
 
     <view class="vertical-divider"></view>
 
     <view class="search-bar-new">
-      <block wx:if="{{isAuthorized}}">
-        <input class="search-input-new" placeholder="搜索活动..." bindinput="onSearchInput" bindconfirm="executeSearch" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
-        <image class="search-icon-small" src="/images/search.svg" bindtap="executeSearch"></image>
-      </block>
-      <block wx:else>
-        <input class="search-input-new" disabled placeholder="搜索活动..." catchtap="forceLoginAction" />
-        <image class="search-icon-small" src="/images/search.svg" catchtap="forceLoginAction"></image>
-      </block>
+      <input class="search-input-new" placeholder="搜索活动..." bindinput="onSearchInput" bindconfirm="executeSearch" bindfocus="onSearchFocus" bindblur="onSearchBlur" />
+      <image class="search-icon-small" src="/images/search.svg" bindtap="executeSearch"></image>
     </view>
   </view>
 
