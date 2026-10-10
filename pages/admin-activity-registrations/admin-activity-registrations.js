@@ -144,12 +144,25 @@ Page({
 
       return wx.cloud.downloadFile({ fileID: res.result.fileID });
     }).then(res => {
-      wx.hideLoading();
-      wx.openDocument({
-        filePath: res.tempFilePath,
-        fileType: 'xlsx',
-        showMenu: true
+      const filePath = `${wx.env.USER_DATA_PATH}/registrations-${Date.now()}.xlsx`;
+      return new Promise((resolve, reject) => {
+        wx.getFileSystemManager().copyFile({
+          srcPath: res.tempFilePath,
+          destPath: filePath,
+          success: () => {
+            wx.openDocument({
+              filePath,
+              fileType: 'xlsx',
+              showMenu: true,
+              success: resolve,
+              fail: reject
+            });
+          },
+          fail: reject
+        });
       });
+    }).then(() => {
+      wx.hideLoading();
     }).catch(err => {
       wx.hideLoading();
       console.error('导出报名信息失败', err);
