@@ -78,8 +78,8 @@
   <button class="share-btn" hover-class="hover-click" bindtap="showShareModal">
     <image class="share-icon" src="./sharing.svg"></image>
   </button>
-  <button class="signup-btn {{activity.status === 'ended' ? 'btn-disabled' : ''}}" hover-class="hover-click" bindtap="onSignup" disabled="{{activity.status === 'ended'}}">
-    {{activity.status === 'ended' ? '已截止' : '立即报名'}}
+  <button class="signup-btn {{activity.status === 'ended' || hasRegistered || !registrationChecked ? 'btn-disabled' : ''}}" hover-class="hover-click" bindtap="onSignup" disabled="{{activity.status === 'ended' || hasRegistered || !registrationChecked}}">
+    {{activity.status === 'ended' ? '已截止' : (hasRegistered ? '已报名' : (registrationChecked ? '立即报名' : '加载中'))}}
   </button>
 </view>
 

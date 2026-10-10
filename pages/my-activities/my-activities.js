@@ -43,7 +43,7 @@ Page({
           
           return {
             ...item,
-            activityId: item.type === 'volunteer' ? item.activity_id : item.route_id,
+            activityId: item.type === 'volunteer' ? (item.task_id || item.activity_id) : item.route_id,
             displayTitle: item.displayTitle || (item.type === 'volunteer' ? '志愿活动' : '研学活动'),
             regStatus: item.status || '已报名',
             formattedTime: formattedTime,

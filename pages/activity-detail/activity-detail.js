@@ -5,6 +5,8 @@ Page({
     id: null,
     activity: {},
     loading: true,
+    registrationChecked: false,
+    hasRegistered: false,
     showShareModal: false
   },
 
@@ -87,12 +89,34 @@ Page({
       },
       loading: false
     });
+
+    this.loadRegistrationStatus(route._id || route.id);
+  },
+
+  loadRegistrationStatus(activityId) {
+    this.setData({ registrationChecked: false, hasRegistered: false });
+    wx.cloud.callFunction({
+      name: 'getUserRegistrations',
+      data: { activityId }
+    }).then(res => {
+      const registrations = (res.result && res.result.success && res.result.data) || [];
+      const hasRegistered = registrations.some(item => !['已拒绝', 'rejected', '已取消', 'cancelled'].includes(item.status));
+      this.setData({ registrationChecked: true, hasRegistered });
+    }).catch(err => {
+      console.error('获取报名状态失败', err);
+      this.setData({ registrationChecked: true });
+    });
   },
 
   onSignup() {
     if (this.data.activity.status === 'ended') {
         wx.showToast({ title: '活动已截止', icon: 'none' });
         return;
+    }
+    if (!this.data.registrationChecked) return;
+    if (this.data.hasRegistered) {
+      wx.showToast({ title: '您已报名该活动', icon: 'none' });
+      return;
     }
     const id = this.data.activity._id || this.data.activity.id;
     if (id) {
