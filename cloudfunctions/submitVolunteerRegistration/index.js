@@ -6,6 +6,27 @@ cloud.init({
 })
 
 const db = cloud.database()
+const INACTIVE_STATUSES = ['已拒绝', 'rejected', '已取消', 'cancelled']
+
+async function getRegistrations(taskId) {
+  const registrations = []
+  const pageSize = 100
+  let skip = 0
+
+  while (true) {
+    const { data } = await db.collection('volunteer_registrations')
+      .where({ task_id: taskId })
+      .skip(skip)
+      .limit(pageSize)
+      .get()
+
+    registrations.push(...data)
+    if (data.length < pageSize) break
+    skip += data.length
+  }
+
+  return registrations
+}
 
 // 云函数入口函数
 exports.main = async (event, context) => {
@@ -62,7 +83,9 @@ exports.main = async (event, context) => {
     const task = taskResult.data
     // 优先使用 quota (addActivity 设置的)，其次 volunteer_quota (旧字段)，最后默认 5
     const volunteerQuota = task.quota || task.volunteer_quota || 5
-    const currentVolunteerCount = task.volunteer_count || 0
+    const registrations = await getRegistrations(task_id)
+    const activeRegistrations = registrations.filter(item => !INACTIVE_STATUSES.includes(item.status))
+    const currentVolunteerCount = activeRegistrations.length
 
     // 检查志愿者名额
     if (currentVolunteerCount >= volunteerQuota) {
@@ -73,14 +96,7 @@ exports.main = async (event, context) => {
     }
 
     // 检查是否重复报名（同一学号）
-    const existingRegistration = await db.collection('volunteer_registrations')
-      .where({
-        task_id: task_id,
-        studentId: studentId
-      })
-      .get()
-
-    if (existingRegistration.data.length > 0) {
+    if (activeRegistrations.some(item => item.studentId === studentId)) {
       return {
         success: false,
         error: '您已经报名过此任务'
@@ -115,7 +131,7 @@ exports.main = async (event, context) => {
     // 更新任务的志愿者数量
     await db.collection('research_routes').doc(task_id).update({
       data: {
-        volunteer_count: db.command.inc(1),
+        volunteer_count: currentVolunteerCount + 1,
         update_time: new Date()
       }
     })
@@ -139,4 +155,4 @@ exports.main = async (event, context) => {
       error: error.message || '报名失败'
     }
   }
-} 
+}
