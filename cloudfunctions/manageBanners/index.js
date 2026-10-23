@@ -23,7 +23,7 @@ exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
 
   try {
-    if (action === 'add' || action === 'delete') await assertManager()
+    if (['add', 'update', 'delete'].includes(action)) await assertManager()
     if (action === 'get') {
       const result = await db.collection('PastActivities').orderBy('create_time', 'desc').get()
       const banners = result.data || []
@@ -70,6 +70,25 @@ exports.main = async (event, context) => {
           create_time: new Date()
         }
       })
+    }
+    else if (action === 'update') {
+      if (typeof id !== 'string' || !id.trim() || id.startsWith('sys_')) throw new Error('活动ID无效')
+      const data = {}
+      for (const [key, value] of Object.entries({ url, link, title, subtitle, tag })) {
+        if (value === undefined) continue
+        if (typeof value !== 'string') throw new Error('活动信息格式无效')
+        data[key] = value.trim()
+      }
+      if (!Object.keys(data).length) throw new Error('没有需要保存的修改')
+      if (data.url !== undefined && !data.url) throw new Error('请上传图片')
+      if (data.link && !/^https?:\/\/[^\s/?#]+(?:[/?#][^\s]*)?$/i.test(data.link)) throw new Error('请填写完整的网页链接')
+      const result = await db.collection('PastActivities').doc(id).update({ data })
+      if (result.stats.updated === 0) {
+        // 同值更新也会返回 0，只有记录确实不存在时才提示失效。
+        const existing = await db.collection('PastActivities').where({ _id: id }).limit(1).get()
+        if (!existing.data.length) throw new Error('活动不存在，请刷新后重试')
+      }
+      return { ...result, success: true }
     }
     else if (action === 'delete') {
       return await db.collection('PastActivities').doc(id).remove()

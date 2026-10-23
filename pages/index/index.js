@@ -283,9 +283,16 @@ Page({
   },
 
   onBannerTap(e) {
-    const link = e.currentTarget.dataset.link;
+    const link = (e.currentTarget.dataset.link || '').trim();
     if (link) {
-      if (link.includes('huixintongxue.com')) {
+      if (/^https?:\/\/mp\.weixin\.qq\.com\/s(?:[/?#]|$)/i.test(link) && wx.openOfficialAccountArticle) {
+        wx.openOfficialAccountArticle({
+          url: link,
+          fail: () => {
+            this.setData({ showBrowserGuide: true, currentExternalLink: link });
+          }
+        });
+      } else if (link.includes('huixintongxue.com')) {
         // 自己配置了业务域名，直接在小程序内跳转
         wx.navigateTo({
           url: `/pages/webview/webview?url=${encodeURIComponent(link)}`

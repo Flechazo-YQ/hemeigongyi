@@ -1,0 +1,26 @@
+[
+  {
+    "Path": "pages/admin-banners/admin-banners.js",
+    "SHA256": "cd175438c5a32aaa19d5f83f067e02d2cea89a737f5994713a92a06cb3daa142"
+  },
+  {
+    "Path": "pages/admin-banners/admin-banners.wxml",
+    "SHA256": "3ff38c3172c5db58de9e50a0bcecac06592bfaf3c8157c0c41bb9857c60d5476"
+  },
+  {
+    "Path": "pages/admin-banners/admin-banners.wxss",
+    "SHA256": "a8939be1423d7f41e8c92145313d764e69283206b94ca97e2e63e7d8d60b0642"
+  },
+  {
+    "Path": "pages/index/index.js",
+    "SHA256": "ad2555123e468e0b5254132207d25eb20d702dfc83c00a2fb13f0138ad4a3992"
+  },
+  {
+    "Path": "cloudfunctions/manageBanners/index.js",
+    "SHA256": "650333ca9c873472f0f280c2baa07c658239953950631f0952b965f8514fef71"
+  },
+  {
+    "Path": "project.config.json",
+    "SHA256": "a186d384a306ab67c8281f4904145090c8e5ba26bf2fc371cb79d1c3f1f04f34"
+  }
+]
