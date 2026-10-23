@@ -7,12 +7,23 @@ cloud.init({
 
 const db = cloud.database()
 
+async function assertManager() {
+  const { OPENID } = cloud.getWXContext()
+  if (!OPENID) throw new Error('请先登录')
+  const { data } = await db.collection('users').where({
+    _openid: OPENID,
+    role: db.command.in(['admin', 'publisher'])
+  }).limit(1).get()
+  if (!data.length) throw new Error('无轮播图管理权限')
+}
+
 // 云函数入口函数
 exports.main = async (event, context) => {
   const { action, url, link, title, subtitle, tag, id } = event
   const wxContext = cloud.getWXContext()
 
   try {
+    if (action === 'add' || action === 'delete') await assertManager()
     if (action === 'get') {
       const result = await db.collection('PastActivities').orderBy('create_time', 'desc').get()
       const banners = result.data || []
@@ -49,8 +60,6 @@ exports.main = async (event, context) => {
       }
     }
     else if (action === 'add') {
-      // 简单的权限检查，实际项目中建议结合 users 集合检查 role
-      // 这里假设只有管理员能调用此函数进行 add 操作（前端控制入口）
       return await db.collection('PastActivities').add({
         data: {
           url,
@@ -74,7 +83,7 @@ exports.main = async (event, context) => {
   } catch (err) {
     return {
       success: false,
-      error: err
+      error: err.message || '操作失败'
     }
   }
 }

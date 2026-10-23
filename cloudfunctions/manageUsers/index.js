@@ -14,6 +14,7 @@ exports.main = async (event, context) => {
   const { action, payload } = event
 
   try {
+    if (!openid) return { success: false, error: '请先登录' }
     // 权限校验：获取当前调用者的角色
     const callerResult = await db.collection('users').where({ _openid: openid }).get()
     if (!callerResult.data || callerResult.data.length === 0) {
@@ -21,8 +22,7 @@ exports.main = async (event, context) => {
     }
     const caller = callerResult.data[0]
     
-    // 如果是修改权限，则必须是 admin
-    if (action === 'updateRole' && caller.role !== 'admin') {
+    if (caller.role !== 'admin') {
       return { success: false, error: '无权限执行此操作' }
     }
 

@@ -20,7 +20,6 @@ async function assertAdmin() {
 async function rejectRegistration(collectionName, id) {
   const isVolunteer = collectionName === 'volunteer_registrations'
   const routeField = isVolunteer ? 'task_id' : 'route_id'
-  const countField = isVolunteer ? 'volunteer_count' : 'current_count'
 
   return db.runTransaction(async transaction => {
     const { data: registration } = await transaction.collection(collectionName).doc(id).get()
@@ -28,15 +27,19 @@ async function rejectRegistration(collectionName, id) {
 
     await transaction.collection(collectionName).doc(id).remove()
 
+    if (['已拒绝', 'rejected', '已取消', 'cancelled'].includes(registration.status)) return
+
     const activityId = registration[routeField]
     if (!activityId) return
 
     const { data: activity } = await transaction.collection('research_routes').doc(activityId).get()
     if (!activity) return
 
+    const countField = activity.type === 'volunteer' ? 'volunteer_count' : 'current_count'
+
     await transaction.collection('research_routes').doc(activityId).update({
       data: {
-        [countField]: Math.max(0, Number(activity[countField]) || 0) - 1,
+        [countField]: Math.max(0, (Number(activity[countField]) || 0) - 1),
         update_time: new Date()
       }
     })

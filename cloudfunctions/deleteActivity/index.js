@@ -8,6 +8,16 @@ cloud.init({
 const db = cloud.database()
 const _ = db.command
 
+async function assertManager() {
+    const { OPENID } = cloud.getWXContext()
+    if (!OPENID) throw new Error('请先登录')
+    const { data } = await db.collection('users').where({
+        _openid: OPENID,
+        role: _.in(['admin', 'publisher'])
+    }).limit(1).get()
+    if (!data.length) throw new Error('无活动管理权限')
+}
+
 // 云函数入口函数
 exports.main = async (event, context) => {
     console.log('=== deleteActivity 云函数开始执行 ===')
@@ -23,6 +33,7 @@ exports.main = async (event, context) => {
     }
 
     try {
+        await assertManager()
         // 1. 确定相关的报名表和查询字段
         const isVolunteer = type === 'volunteer';
         const registrationCollection = isVolunteer ? 'volunteer_registrations' : 'registrations';

@@ -7,12 +7,23 @@ cloud.init({
 
 const db = cloud.database()
 
+async function assertManager() {
+  const { OPENID } = cloud.getWXContext()
+  if (!OPENID) throw new Error('请先登录')
+  const { data } = await db.collection('users').where({
+    _openid: OPENID,
+    role: db.command.in(['admin', 'publisher'])
+  }).limit(1).get()
+  if (!data.length) throw new Error('无活动管理权限')
+}
+
 // 云函数入口函数
 exports.main = async (event, context) => {
   console.log('=== addActivity 云函数开始执行 ===')
   console.log('接收到的参数:', event)
   
   try {
+    await assertManager()
     const { 
       id, _id, // Check for ID to determine if update
       title, type, category, time, location, deadline, quota, 
@@ -85,4 +96,4 @@ exports.main = async (event, context) => {
       error: error.message || '添加活动失败'
     }
   }
-} 
+}
