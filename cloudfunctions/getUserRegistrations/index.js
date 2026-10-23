@@ -1,98 +1,74 @@
-// 云函数入口文件
 const cloud = require('wx-server-sdk')
 
-cloud.init({
-  env: cloud.DYNAMIC_CURRENT_ENV
-})
+cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const db = cloud.database()
 
-// 云函数入口函数
-exports.main = async (event, context) => {
-  const wxContext = cloud.getWXContext()
-  const openid = wxContext.OPENID
-  const { activityId } = event
+async function getAll(collectionName, query) {
+  const rows = []
+  for (let skip = 0; ; skip += 100) {
+    const { data } = await db.collection(collectionName).where(query)
+      .orderBy('_id', 'asc').skip(skip).limit(100).get()
+    rows.push(...data)
+    if (data.length < 100) return rows
+  }
+}
 
+function activityId(item) {
+  return item.task_id || item.route_id || item.activity_id || item.activityId
+}
+
+exports.main = async (event = {}) => {
   try {
-    const volunteerQuery = { _openid: openid }
-    const studyQuery = { _openid: openid }
-    if (activityId) {
-      volunteerQuery.task_id = activityId
-      studyQuery.route_id = activityId
+    const { OPENID } = cloud.getWXContext()
+    if (!OPENID) throw new Error('请先登录')
+    if (event.activityId !== undefined && (typeof event.activityId !== 'string' || !event.activityId.trim())) {
+      throw new Error('活动ID无效')
+    }
+    const currentQuery = { _openid: OPENID }
+    const legacyQuery = { _openid: OPENID }
+    if (event.activityId) {
+      currentQuery.task_id = event.activityId.trim()
+      legacyQuery.route_id = event.activityId.trim()
+    }
+    const [current, legacy] = await Promise.all([
+      getAll('volunteer_registrations', currentQuery),
+      getAll('registrations', legacyQuery)
+    ])
+    const rows = [
+      ...current.map(item => ({ ...item, sourceCollection: 'volunteer_registrations' })),
+      ...legacy.map(item => ({ ...item, sourceCollection: 'registrations' }))
+    ]
+    const ids = [...new Set(rows.map(activityId).filter(Boolean))]
+    const activities = new Map()
+    for (let index = 0; index < ids.length; index += 20) {
+      const { data } = await db.collection('research_routes')
+        .where({ _id: db.command.in(ids.slice(index, index + 20)) }).limit(100).get()
+      for (const activity of data) activities.set(activity._id, activity)
     }
 
-    // 1. 获取志愿者报名记录
-    const volunteerRes = await db.collection('volunteer_registrations')
-      .where(volunteerQuery)
-      .orderBy('create_time', 'desc')
-      .get()
+    const registrations = rows.map(item => {
+      const id = activityId(item)
+      const activity = activities.get(id)
+      const snapshotType = item.activity_type || item.type
+      const type = activity ? (activity.type === 'volunteer' ? 'volunteer' : 'study')
+        : ['volunteer', 'study'].includes(snapshotType) ? snapshotType
+          : item.sourceCollection === 'registrations' || item.route_id ? 'study' : 'volunteer'
+      return {
+        ...item,
+        activityId: id,
+        task_id: item.task_id || id,
+        route_id: item.route_id || id,
+        type,
+        displayTitle: (activity && activity.title) || item.task_title || item.route_title ||
+          item.activity_title || item.title || (type === 'volunteer' ? '志愿活动' : '研学活动'),
+        displayTime: item.create_time || item.createdAt || item.createTime || item.registration_time || null
+      }
+    }).sort((first, second) => new Date(second.displayTime || 0) - new Date(first.displayTime || 0))
 
-    // 2. 获取研学报名记录
-    const studyRes = await db.collection('registrations')
-      .where(studyQuery)
-      .orderBy('create_time', 'desc')
-      .get()
-
-    // 3. 处理和合并数据
-    const volunteerList = volunteerRes.data.map(item => ({
-      ...item,
-      type: 'volunteer',
-      displayTitle: item.task_title || '志愿活动',
-      displayTime: item.create_time
-    }))
-
-    const studyList = studyRes.data.map(item => {
-        // 研学报名记录里可能没有直接存 title，只有 route_id
-        // 这里暂时先用 route_id 或者需要联表查询。
-        // 为了性能，如果之前写入时没存 title，这里可能需要二次查询或者前端处理。
-        // 查看 submitRegistration，它只存了 route_id。
-        // 这是一个潜在问题。为了简单起见，我们先返回，如果前端需要 title，可能需要额外获取。
-        // 或者我们在这里做一个简单的 lookup (如果量不大的话)
-        return {
-            ...item,
-            type: 'study',
-            displayTitle: '研学活动', // 暂时占位，理想情况应该在报名时存入 title
-            displayTime: item.create_time
-        }
-    })
-    
-    // 如果研学活动需要 title，我们尝试获取一下 route 信息
-    // 收集所有 route_id
-    const routeIds = studyList.map(i => i.route_id);
-    if (routeIds.length > 0) {
-        const routesRes = await db.collection('research_routes')
-            .where({
-                _id: db.command.in(routeIds)
-            })
-            .get();
-        
-        const routeMap = {};
-        routesRes.data.forEach(r => {
-            routeMap[r._id] = r.title;
-        });
-        
-        studyList.forEach(item => {
-            if (routeMap[item.route_id]) {
-                item.displayTitle = routeMap[item.route_id];
-            }
-        });
-    }
-
-    // 合并并按时间倒序
-    const allList = [...volunteerList, ...studyList].sort((a, b) => {
-      return new Date(b.displayTime) - new Date(a.displayTime)
-    })
-
-    return {
-      success: true,
-      data: allList
-    }
-
+    return { success: true, data: registrations }
   } catch (error) {
-    console.error(error)
-    return {
-      success: false,
-      error: error.message
-    }
+    console.error('获取本人报名失败:', error.code || 'USER_REGISTRATIONS_FAILED')
+    return { success: false, error: error.message || '获取报名记录失败' }
   }
 }

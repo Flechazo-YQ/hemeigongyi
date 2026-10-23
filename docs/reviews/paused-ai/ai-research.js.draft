@@ -1,0 +1,139 @@
+const WELCOME_MESSAGE = '您好，欢迎来到AI研学规划，我是您的专属规划师"小椒"!'
+
+Page({
+  data: {
+    chatMessage: '',
+    placeholderText: '请输入你的需求...',
+    chatHistory: [],
+    isLoading: false,
+    keyboardHeight: 0,
+    scrollToMessage: ''
+  },
+
+  onLoad() {
+    this._isUnloaded = false
+    this._requestId = 0
+    this.showWelcomeMessage()
+  },
+
+  onShow() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().updateList()
+      this.getTabBar().setActiveByRoute(this.route)
+    }
+  },
+
+  onUnload() {
+    this._isUnloaded = true
+    this._requestId += 1
+    clearInterval(this._welcomeTimer)
+    clearTimeout(this._scrollTimer)
+    this._welcomeTimer = null
+    this._scrollTimer = null
+  },
+
+  onFocus() {
+    this.setData({ placeholderText: '' })
+  },
+
+  onBlur() {
+    this.setData({ placeholderText: '请输入你的需求...' })
+  },
+
+  onKeyboardHeightChange(e) {
+    this.setData({ keyboardHeight: e.detail.height })
+    if (e.detail.height > 0) this.scrollToBottom()
+  },
+
+  showWelcomeMessage() {
+    let index = 0
+    clearInterval(this._welcomeTimer)
+    this.setData({ chatHistory: [{ role: 'assistant', content: '' }] })
+    this._welcomeTimer = setInterval(() => {
+      if (this._isUnloaded) return
+      index += 1
+      this.setData({ 'chatHistory[0].content': WELCOME_MESSAGE.slice(0, index) })
+      if (index >= WELCOME_MESSAGE.length) {
+        clearInterval(this._welcomeTimer)
+        this._welcomeTimer = null
+      }
+    }, 100)
+  },
+
+  scrollToBottom() {
+    clearTimeout(this._scrollTimer)
+    this._scrollTimer = setTimeout(() => {
+      this._scrollTimer = null
+      if (this._isUnloaded) return
+      this.setData({ scrollToMessage: `msg-${this.data.chatHistory.length - 1}` })
+    }, 100)
+  },
+
+  onChatInput(e) {
+    this.setData({ chatMessage: e.detail.value })
+  },
+
+  async sendChatMessage() {
+    const chatMessage = this.data.chatMessage.trim()
+    if (!chatMessage || this.data.isLoading || this._isUnloaded) return
+
+    if (this._welcomeTimer) {
+      clearInterval(this._welcomeTimer)
+      this._welcomeTimer = null
+      this.setData({ 'chatHistory[0].content': WELCOME_MESSAGE })
+    }
+
+    const history = [...this.data.chatHistory, { role: 'user', content: chatMessage }]
+    const assistantIndex = history.length
+    const requestId = ++this._requestId
+    this.setData({
+      chatHistory: [...history, { role: 'assistant', content: '正在思考，请稍候…' }],
+      chatMessage: '',
+      isLoading: true
+    })
+    this.scrollToBottom()
+
+    const messages = history
+      .filter(message => !message.isError && message.content.trim())
+      .map(message => ({ role: message.role, content: message.content }))
+    messages.unshift({
+      role: 'system',
+      content: '你是青椒童行的研学规划师“小椒”，帮助用户规划适龄研学活动、行程和学习目标。请用简短、直接的中文回答，不要使用任何Markdown格式。'
+    })
+
+    try {
+      const response = await wx.cloud.callFunction({ name: 'getAIChat', data: { messages } })
+      // 云函数调用无法中止；页面离开后使本次结果失效，避免更新已销毁的页面。
+      if (this._isUnloaded || requestId !== this._requestId) return
+      const result = response && response.result
+      if (!result || result.success !== true) {
+        this.handleError(history, 'AI 服务暂时不可用，请稍后重试。')
+        return
+      }
+      const content = result.data?.choices?.[0]?.message?.content
+      if (typeof content !== 'string' || !content.trim()) {
+        this.handleError(history, 'AI 暂未返回有效回复，请稍后重试。')
+        return
+      }
+      this.setData({
+        [`chatHistory[${assistantIndex}].content`]: content.trim(),
+        isLoading: false
+      })
+      this.scrollToBottom()
+    } catch (error) {
+      if (this._isUnloaded || requestId !== this._requestId) return
+      const timedOut = /timeout|timed out|超时/i.test(error?.errMsg || error?.message || '')
+      this.handleError(history, timedOut
+        ? 'AI 回复超时，请稍后重试。'
+        : '连接 AI 服务失败，请检查网络后重试。')
+    }
+  },
+
+  handleError(history, errorMessage) {
+    this.setData({
+      chatHistory: [...history, { role: 'assistant', content: `抱歉，${errorMessage}`, isError: true }],
+      isLoading: false
+    })
+    this.scrollToBottom()
+  }
+})

@@ -45,7 +45,8 @@ Page({
             ...item,
             activityId: item.type === 'volunteer' ? (item.task_id || item.activity_id) : item.route_id,
             displayTitle: item.displayTitle || (item.type === 'volunteer' ? '志愿活动' : '研学活动'),
-            regStatus: item.status || '已报名',
+            regStatus: ({ pending: '待审核', '待处理': '待审核', approved: '已通过',
+              rejected: '已拒绝', cancelled: '已取消', completed: '已完成' })[item.status] || item.status || '已报名',
             formattedTime: formattedTime,
             activityStatus: item.activity_status || '' // Optional activity status
           };

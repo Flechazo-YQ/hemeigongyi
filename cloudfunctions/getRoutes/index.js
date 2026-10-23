@@ -9,6 +9,15 @@ const db = cloud.database()
 const PENDING_STATUSES = ['pending', '待处理', '待审核']
 const INACTIVE_STATUSES = ['已拒绝', 'rejected', '已取消', 'cancelled']
 
+async function assertManager() {
+  const { OPENID } = cloud.getWXContext()
+  if (!OPENID) throw new Error('请先登录')
+  const { data } = await db.collection('users').where({
+    _openid: OPENID, role: db.command.in(['admin', 'publisher'])
+  }).limit(1).get()
+  if (!data.length) throw new Error('无活动管理权限')
+}
+
 async function getRegistrationCounts(collectionName, routeField, routeIds) {
   const counts = { active: {}, pending: {} }
   const pageSize = 100
@@ -70,17 +79,22 @@ exports.main = async (event, context) => {
   console.log('接收到的参数:', event)
   
   try {
-    const { category, includePendingCount } = event
+    const { category, includePendingCount, includeDeleting } = event
     
     console.log('开始查询数据库...')
     
     // 构建查询条件
     let whereCondition = { enabled: true }
+    if (includeDeleting) {
+      await assertManager()
+      whereCondition = db.command.or([{ enabled: true }, { deleting: true }])
+    }
     
     // 如果指定了分类且不是全部，则添加分类筛选
     if (category && category !== '全部') {
       console.log('添加分类筛选:', category)
-      whereCondition.category = category
+      whereCondition = includeDeleting ? db.command.and([whereCondition, { category }])
+        : { ...whereCondition, category }
     }
     
     console.log('查询条件:', whereCondition)
@@ -121,7 +135,7 @@ exports.main = async (event, context) => {
             functionName: 'getRoutes',
             deployTime: new Date().toISOString(),
             env: cloud.DYNAMIC_CURRENT_ENV,
-            version: '20261023.1',
+            version: '20261023.2',
             message: '使用数据库数据'
           }
         }

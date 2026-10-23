@@ -2,6 +2,7 @@ const assert = require('node:assert/strict')
 const fs = require('node:fs')
 const path = require('node:path')
 const vm = require('node:vm')
+const { execFileSync } = require('node:child_process')
 
 const root = path.resolve(__dirname, '..')
 const clone = value => JSON.parse(JSON.stringify(value))
@@ -175,7 +176,7 @@ async function checkRejectionFloor() {
       volunteer_registrations: [{ _id: 'registration', task_id: 'task', status: 'pending' }]
     })
     const result = await loadFunction('updateRegistrationStatus', database, 'admin-user')({
-      id: 'registration', sourceCollection: 'volunteer_registrations', status: '已拒绝'
+      id: 'registration', sourceCollection: 'volunteer_registrations', status: '已拒绝', reason: '测试拒绝意见'
     })
     assert.equal(result.success, true)
     assert.equal(data.research_routes[0].volunteer_count, Math.max(0, count - 1))
@@ -183,19 +184,11 @@ async function checkRejectionFloor() {
   }
 }
 
-const signup = studentId => ({ task_id: 'task', volunteerName: 'Test', volunteerGender: '男', studentId, college: 'Test', major: 'Test', volunteerPhone: '13800000000', politicalStatus: '群众' })
-
-async function diagnoseConcurrentSignup(sameStudent) {
-  const { database, data } = memoryDatabase({ research_routes: [{ _id: 'task', title: 'Test', quota: sameStudent ? 2 : 1, volunteer_count: 0 }] })
-  const submit = loadFunction('submitVolunteerRegistration', database)
-  const results = await Promise.all([submit(signup('12345678')), submit(signup(sameStudent ? '12345678' : '12345679'))])
-  assert.equal(results.filter(result => result.success).length, 1, 'two concurrent calls should produce exactly one accepted signup')
-  assert.equal(data.volunteer_registrations.length, 1)
-}
-
-async function diagnoseClosedSignup() {
-  const { database } = memoryDatabase({ research_routes: [{ _id: 'task', title: 'Test', quota: 2, enabled: false, deadline: '2020-01-01' }] })
-  assert.equal((await loadFunction('submitVolunteerRegistration', database)(signup('12345678'))).success, false)
+async function checkRegistrationTransactionSuites() {
+  // 旧 mock 不模拟版本冲突和回滚；并发与截止合同由 MVCC 及实际 SDK 边界套件负责。
+  for (const file of ['registration-atomic.test.js', 'registration-atomic-review.test.js']) {
+    execFileSync(process.execPath, [path.join(__dirname, file)], { stdio: 'inherit' })
+  }
 }
 
 async function diagnoseStudyDelete() {
@@ -215,7 +208,7 @@ async function checkStudyRejectionCounter() {
     research_routes: [{ _id: 'task', type: 'study', volunteer_count: 7, current_count: 3 }],
     volunteer_registrations: [{ _id: 'registration', task_id: 'task', status: 'pending' }]
   })
-  const result = await loadFunction('updateRegistrationStatus', database, 'admin-user')({ id: 'registration', status: '已拒绝' })
+  const result = await loadFunction('updateRegistrationStatus', database, 'admin-user')({ id: 'registration', status: '已拒绝', reason: '测试拒绝意见' })
   assert.equal(result.success, true)
   assert.equal(data.research_routes[0].current_count, 2, 'study signup in volunteer collection must decrement study count')
   assert.equal(data.research_routes[0].volunteer_count, 7, 'record collection must not determine activity count field')
@@ -229,7 +222,7 @@ async function checkInactiveRejection() {
       research_routes: [{ _id: 'task', type: 'volunteer', volunteer_count: 2 }],
       volunteer_registrations: [{ _id: 'registration', task_id: 'task', status }]
     })
-    const result = await loadFunction('updateRegistrationStatus', database, 'admin-user')({ id: 'registration', status: '已拒绝' })
+    const result = await loadFunction('updateRegistrationStatus', database, 'admin-user')({ id: 'registration', status: '已拒绝', reason: '测试拒绝意见' })
     assert.equal(result.success, true)
     assert.equal(data.research_routes[0].volunteer_count, 2, 'inactive record should not decrement active count')
     assert.equal(data.volunteer_registrations.length, 0)
@@ -245,14 +238,12 @@ async function main() {
   process.stdout.write(`PASS ${regressions.length} regression groups (local mocks only)\n`)
   if (!process.argv.includes('--diagnostics')) return
   const diagnostics = [
-    ['concurrent quota', () => diagnoseConcurrentSignup(false)],
-    ['concurrent duplicate', () => diagnoseConcurrentSignup(true)],
-    ['closed activity signup', diagnoseClosedSignup],
+    ['registration transactions, identity uniqueness and deadline', checkRegistrationTransactionSuites],
     ['study deletion orphan', diagnoseStudyDelete]
   ]
   for (const [name, check] of diagnostics) {
-    try { await check(); process.stdout.write(`RESOLVED ${name}\n`) }
-    catch (error) { process.stdout.write(`KNOWN-ISSUE ${name}: ${error.message}\n`) }
+    await check()
+    process.stdout.write(`PASS ${name}\n`)
   }
 }
 

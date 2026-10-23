@@ -1,3 +1,5 @@
+const { isRegistrationClosed } = require('../../utils/util')
+
 Page({
   data: {
     banners: [],
@@ -170,23 +172,15 @@ Page({
   },
 
   processRoutes(cloudRoutes) {
-    // Check deadlines and update status
-    const now = new Date();
-    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-
-    let allRoutes = cloudRoutes.map(item => {
-      if (item.deadline && item.deadline < today && item.status !== 'ended') {
-        item.status = 'ended';
-      }
+    const now = Date.now();
+    const allRoutes = cloudRoutes.filter(item => !isRegistrationClosed(item, now)).map(route => {
+      const item = { ...route };
       if (item.type === 'volunteer') {
         item.current_count = item.volunteer_count !== undefined ? item.volunteer_count : (item.current_count || 0);
         item.quota = item.volunteer_quota !== undefined ? item.volunteer_quota : (item.quota || 0);
       }
       return item;
     });
-
-    // Filter out ended activities for home page
-    allRoutes = allRoutes.filter(item => item.status !== 'ended');
 
     this.setData({
       masterRoutes: allRoutes

@@ -28,6 +28,13 @@
       </view>
 
       <view class="form-item">
+        <text class="label">年龄（选填）</text>
+        <view class="input-area">
+          <input class="input" placeholder="请输入年龄（0至120）" type="number" maxlength="3" placeholder-class="placeholder" value="{{age}}" bindinput="inputAge" />
+        </view>
+      </view>
+
+      <view class="form-item">
         <text class="label required">手机号</text>
         <view class="input-area">
           <input class="input" placeholder="请输入11位手机号码" type="number" maxlength="11" placeholder-class="placeholder" value="{{phone}}" bindinput="inputPhone" />
@@ -81,6 +88,6 @@
 
   <!-- 底部悬浮按钮 -->
   <view class="bottom-bar">
-    <button class="submit-btn" bindtap="submitSignup">立即提交报名</button>
+    <button class="submit-btn" bindtap="submitSignup" disabled="{{submitting}}" loading="{{submitting}}">立即提交报名</button>
   </view>
 </view>

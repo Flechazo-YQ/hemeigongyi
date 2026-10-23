@@ -25,9 +25,7 @@ Component({
   },
   methods: {
     updateList() {
-      const userType = app.globalData.userType || 'user' // Default to user
-      // Use viewMode if set, otherwise fallback to userType
-      const currentMode = app.globalData.viewMode || userType;
+      const currentMode = app.normalizeViewMode();
       const list = (currentMode === 'admin' || currentMode === 'publisher') ? app.globalData.adminTabBarList : app.globalData.userTabBarList
       this.setData({
         list,
@@ -46,8 +44,14 @@ Component({
     switchTab(e) {
       const data = e.currentTarget.dataset
       const url = data.path
+      if (typeof url !== 'string') return;
 
       const targetPath = url.startsWith('/') ? url : '/' + url;
+      this.updateList();
+      if (!this.data.list.some(item => item.pagePath === targetPath)) {
+        wx.showToast({ title: '请先登录并确认管理权限', icon: 'none' });
+        return;
+      }
 
       if (targetPath === '/pages/admin-volunteer/admin-volunteer') {
         wx.reLaunch({ url });

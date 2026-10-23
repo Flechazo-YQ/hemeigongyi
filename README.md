@@ -1,6 +1,6 @@
 # 青椒童行 - 研学报名小程序
 
-这是一个基于微信小程序原生开发的研学与志愿活动管理平台。集成了活动展示、在线报名、AI 智能助手和 AR 识图伴学等功能。
+这是一个基于微信小程序原生开发的研学与志愿活动管理平台。集成了活动展示、在线报名和 AI 智能助手等功能。
 
 ## 主要功能
 
@@ -10,14 +10,10 @@
 - **在线报名**：支持普通用户和志愿者在线填写报名信息。
 
 ### 2. AI 研学助手
-- 集成 **火山引擎 (Volcengine)** 大模型 API。
-- 提供流式对话体验，协助用户规划研学路线、解答相关疑问。
-- 支持打字机效果和历史对话记录。
+- 仓库包含 AI 对话页面；按用户本轮要求暂缓修改和发布该功能。
 
-### 3. AR 伴学 (识图功能)
-- 支持拍照或上传图片。
-- 使用云函数 `analyzeImage` 进行图像分析。
-- 智能识别物体并返回详细的百科介绍。
+### 3. AR 伴学 (尚未提供页面)
+- 当前仓库和 `app.json` 未提供 AR 页面，也未包含 `analyzeImage` 云函数，不能作为现有功能使用。
 
 ### 4. 用户中心
 - **快捷登录**：支持微信一键登录和手机号授权。
@@ -33,12 +29,10 @@
 
 - **前端**：微信小程序原生框架 (WXML, WXSS, JavaScript)
 - **后端**：微信云开发 (WeChat Cloud Development)
-  - **云函数**：处理主要业务逻辑 (如 `getRoutes`, `submitVolunteerRegistration`, `analyzeImage` 等)
+  - **云函数**：处理主要业务逻辑 (如 `getRoutes`, `submitVolunteerRegistration` 等)
   - **云数据库**：存储活动、用户、报名记录等数据
   - **云存储**：存储活动图片、用户上传的图片
-- **AI 服务**：
-  - 对话模型：火山引擎 (DeepSeek/Doubao 等模型接入)
-  - 图像识别：多模态大模型 api
+- **AI 服务**：本轮暂缓处理，现有页面和云端配置不变。
 
 ## 目录结构
 
@@ -46,7 +40,6 @@
 miniprogram-research-app/
 ├── cloudfunctions/             # 云函数目录
 │   ├── addActivity            # 发布活动
-│   ├── analyzeImage           # AR识图/图像分析
 │   ├── getRoutes              # 获取活动列表
 │   ├── submitVolunteerRegistration # 提交报名
 │   ├── manageBanners          # 轮播图管理
@@ -57,7 +50,6 @@ miniprogram-research-app/
 │   ├── index/                 # 首页
 │   ├── activity-detail/       # 活动详情页
 │   ├── ai-research/           # AI 研学对话页
-│   ├── ar-learning/           # AR 伴学页
 │   ├── profile/               # 个人中心
 │   ├── admin-*/               # 管理员相关页面
 │   └── ...
@@ -80,7 +72,7 @@ miniprogram-research-app/
 
 ### 3. 云开发配置
 1. 在开发者工具中点击“云开发”按钮，开通云开发环境。
-2. 将 `project.config.json` 中的 `cloudfunctionEnv` 修改为你自己的环境 ID。
+2. 同时设置 `project.config.json` 的 `cloudfunctionEnv` 与 `app.js` 中 `wx.cloud.init` 的 `env`，两处必须使用同一个目标环境 ID。前者用于开发工具部署，后者决定小程序实际连接的云环境；只改前者不会切换运行环境。
 3. **部署云函数**：
    - 右键点击 `cloudfunctions` 文件夹下的每个函数目录（如 `getRoutes`）。
    - 选择 **“上传并部署：云端安装依赖”**。
@@ -88,12 +80,31 @@ miniprogram-research-app/
 ### 4. 数据库集合 (Collections)
 需要在云开发控制台创建以下集合：
 - `research_routes` (活动/路线表)
-- `registrations` (报名记录表)
-- `banners` (轮播图表)
+- `volunteer_registrations` (当前统一报名记录表)
+- `registrations` (历史研学报名兼容表)
+- `users` (用户资料与服务端角色)
+- `PastActivities` (往期精彩轮播图表，集合名称区分大小写)
 
-### 5. API 配置
-- **AI 对话**：在 `pages/ai-research/ai-research.js` 中配置 `wx.request` 的 URL 和 `Authorization` (API Key)，当前指向火山引擎服务。
-- **图像识别**：确保 `analyzeImage` 云函数已正确配置相关的 AI 服务密钥。
+### 5. AI 对话
+- 本轮按用户要求暂缓 AI 对话，不发布相关页面草稿或云函数。
+- 未发布草稿及对应检查保存在 `docs/reviews/paused-ai/`，该目录已排除小程序打包。
+
+### 6. 本地检查
+使用 Node.js 在项目根目录运行现有回归检查（测试通过本地模拟执行，不需要模型密钥或云端业务数据）：
+
+```powershell
+Get-ChildItem tests -Filter *.test.js | ForEach-Object {
+  node $_.FullName
+  if ($LASTEXITCODE -ne 0) { throw "测试失败：$($_.Name)" }
+}
+```
+
+在微信开发者工具中编译并预览，确认 `app.json` 声明的页面及 `sitemap.json` 存在；打包配置排除开发目录和云函数源码，保留页面、组件、图片和运行时资源。
+
+### 7. 发布与验证
+- 云函数部署与小程序代码上传分别执行。只部署本次修改的云函数，记录目标环境、函数、版本与回滚依据，再验证实际接口和业务结果；本地测试通过不代表云端已更新。
+- 小程序“上传”仅生成开发版本；设为体验版、提交审核和正式发布是后续独立状态，应分别记录。页面修改需要上传小程序，云函数修改需要部署云函数，不能互相替代。
+- 当前仓库未提供管理员网页或企业端网页工程。管理员页面属于小程序；网页发布在本项目中标记为“未涉及”。数据库迁移与存储权限如有变化，应单独记录和核验。
 
 ## 许可证
 
