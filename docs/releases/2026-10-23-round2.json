@@ -1,0 +1,329 @@
+{
+  "env": "cloud1-0gmvnn0id639de25",
+  "appid": "wx8eba34c3c73d6550",
+  "version": "20261023.2",
+  "baseline": "1c6aafe",
+  "rollback": "2026-10-23-round2-rollback.zip",
+  "backupEntries": [
+    {
+      "path": "submitRegistration/index.js",
+      "sha256": "ce77fcd2d1e99fb7715a6cf15d19d772e2080452785365978841be0f8c2fb24f"
+    },
+    {
+      "path": "submitRegistration/package-lock.json",
+      "sha256": "03f19642671a5633174fd8217bbccc95fafd50d1478c729a54edbc11ae573f72"
+    },
+    {
+      "path": "submitRegistration/package.json",
+      "sha256": "a7bff6432db94aa1a981c9f993580369f1218a0fcb78032709490c94a87aff5f"
+    },
+    {
+      "path": "updateRegistrationStatus/index.js",
+      "sha256": "d4f1ad2097530fa99f8e407de688062e0b7f5e28fe9581a86a301bc20406ff82"
+    },
+    {
+      "path": "updateRegistrationStatus/package.json",
+      "sha256": "ac69465760c419eb16835d560d9f3cba13f5bff2afda657c2dd1894ee17c2cfa"
+    },
+    {
+      "path": "deleteActivity/index.js",
+      "sha256": "7fc62226c1bfbd263c355903a1716d59ea25c1b4371385f661e347554154824b"
+    },
+    {
+      "path": "deleteActivity/package.json",
+      "sha256": "d1e15d401a3cad6771b2091ac031ba1ca19872f9b132a13c32c10e405aa78a02"
+    },
+    {
+      "path": "getRegistrations/index.js",
+      "sha256": "4380041a4cc4c365c186b511dee388ab0241a221681e5122ae864584491f0ad9"
+    },
+    {
+      "path": "getRegistrations/package-lock.json",
+      "sha256": "9108f3bcc0185858b4604a43cab03f4082b0267f14291fbea35613c20db56f7a"
+    },
+    {
+      "path": "getRegistrations/package.json",
+      "sha256": "25841293c3a0e572b0f564d521e8c150aa0e1d8e51925a4e2a74b2724af862cb"
+    },
+    {
+      "path": "getUserRegistrations/index.js",
+      "sha256": "f6e8540da182efd2d50bec7f534291c94be49bc913db0890c5fd7b34f92d4585"
+    },
+    {
+      "path": "getUserRegistrations/package.json",
+      "sha256": "26107f99cdac79e6d755697e0f7a30df5b8ee56cf62ff46751c88867c0a80445"
+    },
+    {
+      "path": "exportToExcel/index.js",
+      "sha256": "278aa05f15fa51aed854aca8daa286f35b4332ed5ae4f0163577eeb6bcf8a909"
+    },
+    {
+      "path": "exportToExcel/package-lock.json",
+      "sha256": "250ae4d0e9aec3efba080de698fda4ebae495796f243086278dfd25b36c0d407"
+    },
+    {
+      "path": "exportToExcel/package.json",
+      "sha256": "0a65ad5a20ac1ca08daad23a0c459f185c65a072c90b1d4b5433dd7ce84b0ac3"
+    },
+    {
+      "path": "getRoutes/index.js",
+      "sha256": "578847d65b3dff370454761f2f7a20b8a81638c2c67f9883e4877556eb1420ed"
+    },
+    {
+      "path": "getRoutes/package-lock.json",
+      "sha256": "41029a00af72e64ee76155f38cfe275ba8f953019e76b5587b077e00be90a376"
+    },
+    {
+      "path": "getRoutes/package.json",
+      "sha256": "1639d16cb4804e8b14234c0415be72e4de2a53a9921aed56306689a8208f9605"
+    },
+    {
+      "path": "submitVolunteerRegistration/index.js",
+      "sha256": "ecee1294a80e452f4fecbd6a9c9abf19f03a28247332d3f98bf8a97c89bc2e47"
+    },
+    {
+      "path": "submitVolunteerRegistration/package-lock.json",
+      "sha256": "88ec0e5fce537a72885e3ac7eabc06e5604553db1c50812e29cc019041d6c248"
+    },
+    {
+      "path": "submitVolunteerRegistration/package.json",
+      "sha256": "81591340ac8bef7ab9ed874596d0c5e84d9e5d6de0b2476b6ab2cd076a24fb1d"
+    }
+  ],
+  "functions": [
+    {
+      "name": "submitRegistration",
+      "sourceSha256": "7e1c024cf143cdb18edf00dbbfc47ab055fe2dd546cb3c325655d4e2a81209ff",
+      "status": "deployed_source_verified",
+      "downloadedSourceSha256": "7e1c024cf143cdb18edf00dbbfc47ab055fe2dd546cb3c325655d4e2a81209ff",
+      "deploymentTaskId": "confirmation_cloud_fn_deploy_24b50b91-5aba-474a-81b4-72c43fa57c86",
+      "runtimeStatus": "Active"
+    },
+    {
+      "name": "updateRegistrationStatus",
+      "sourceSha256": "d5b390de9d0158d9db3e8b342a77bc7fd39699ef7eb9ebe5d29eba06d10c0964",
+      "status": "deployed_source_verified",
+      "downloadedSourceSha256": "d5b390de9d0158d9db3e8b342a77bc7fd39699ef7eb9ebe5d29eba06d10c0964",
+      "deploymentTaskId": "confirmation_cloud_fn_deploy_fafa561c-32b9-4798-8e64-413615b289e1",
+      "runtimeStatus": "Active"
+    },
+    {
+      "name": "deleteActivity",
+      "sourceSha256": "2a07eeed959acb978e7efe501354210182847c7be4d082971b41b72361dccc64",
+      "status": "deployed_source_verified",
+      "downloadedSourceSha256": "2a07eeed959acb978e7efe501354210182847c7be4d082971b41b72361dccc64",
+      "deploymentTaskId": "confirmation_cloud_fn_deploy_a34eae8c-c66d-47b1-9574-4e9f4ab3b22b",
+      "runtimeStatus": "Active"
+    },
+    {
+      "name": "getRegistrations",
+      "sourceSha256": "cdaa1e4e0fd1a04e27bd9ed7cbcc31e3c0e48ed2d0e0d22900849a336769296e",
+      "status": "deployed_source_verified",
+      "downloadedSourceSha256": "cdaa1e4e0fd1a04e27bd9ed7cbcc31e3c0e48ed2d0e0d22900849a336769296e",
+      "deploymentTaskId": "confirmation_cloud_fn_deploy_4a64b9ae-b71c-48c7-b9ac-b6629d21144e",
+      "runtimeStatus": "Active"
+    },
+    {
+      "name": "getUserRegistrations",
+      "sourceSha256": "1a637a5c8f3a191954bcf79bb92dd079237257219101cbfbd04d2bf828d72920",
+      "status": "deployed_source_verified",
+      "downloadedSourceSha256": "1a637a5c8f3a191954bcf79bb92dd079237257219101cbfbd04d2bf828d72920",
+      "deploymentTaskId": "confirmation_cloud_fn_deploy_e8153354-37f6-48ec-9b73-3acbb3beb44e",
+      "runtimeStatus": "Active"
+    },
+    {
+      "name": "exportToExcel",
+      "sourceSha256": "f656606f6654f6dabc79f9ad86a851996d86b4322303a14357fe199985676c5b",
+      "status": "deployed_source_verified",
+      "downloadedSourceSha256": "f656606f6654f6dabc79f9ad86a851996d86b4322303a14357fe199985676c5b",
+      "deploymentTaskId": "confirmation_cloud_fn_deploy_3ad0cb77-f86a-4d1c-b1e9-7da7cb3673bb",
+      "runtimeStatus": "Active"
+    },
+    {
+      "name": "getRoutes",
+      "sourceSha256": "9be1f93151d4c08ebc62554274d972162d314b9809aee25d633d2e25a797f7ff",
+      "status": "deployed_source_verified",
+      "downloadedSourceSha256": "9be1f93151d4c08ebc62554274d972162d314b9809aee25d633d2e25a797f7ff",
+      "deploymentTaskId": "confirmation_cloud_fn_deploy_6c6db365-867a-44c5-89fe-3da7428831e2",
+      "runtimeStatus": "Active"
+    },
+    {
+      "name": "submitVolunteerRegistration",
+      "sourceSha256": "112b6278adf26a338081dfec7fbafb1e5f7fd9ebd7f29a9d699e7eb89d48f10d",
+      "status": "deployed_source_verified",
+      "downloadedSourceSha256": "112b6278adf26a338081dfec7fbafb1e5f7fd9ebd7f29a9d699e7eb89d48f10d",
+      "deploymentTaskId": "confirmation_cloud_fn_deploy_de1356e0-dc4f-41b5-a028-8329e2999d55",
+      "runtimeStatus": "Active"
+    }
+  ],
+  "ai": "paused_not_deployed",
+  "miniprogram": {
+    "version": "20261023.5",
+    "status": "uploaded_development_version",
+    "packageBytes": 1043415,
+    "experience": "not_set",
+    "review": "not_submitted",
+    "production": "not_released",
+    "supersededUpload": [
+      "20261023.2 shared directory",
+      "20261023.3 banner admin pages isolated",
+      "20261023.4 same package; homepage isolation completed afterward"
+    ],
+    "stagingPath": "C:\\Users\\87388\\AppData\\Local\\Temp\\qingjiao-registration-release-20261023",
+    "heldAtBaseline": [
+      "pages/admin-banners/admin-banners.js",
+      "pages/admin-banners/admin-banners.wxml",
+      "pages/admin-banners/admin-banners.wxss",
+      "pages/admin-banners/admin-banners.json"
+    ],
+    "baseline": "1c6aafe",
+    "fileSha256": {
+      "app.js": "6cf5b9daf79536d695e1e7bdfd05f0b4994a43adc58d065eb67bab858a9a43ce",
+      "app.json": "68048631115e3c26c3617b9d50c9d40da169d7c09ad2c98e00476f8552d5a3d1",
+      "app.wxss": "0576c3593bd7908d5f4598c68be79b449cea2253411f02d2c8d39fb966dbf46b",
+      "project.config.json": "a186d384a306ab67c8281f4904145090c8e5ba26bf2fc371cb79d1c3f1f04f34",
+      "sitemap.json": "ee73a2b22efa9c3a5ceb4bc4abdcb0920e3726d12def7dc0b7636d97d217b162",
+      "components/custom-loading/custom-loading.js": "49cb42f0df6486287e0c7e00812e954f77e60158512442cbbf77d7a460e45cc8",
+      "components/custom-loading/custom-loading.json": "4be490ae17973c6a560ef9e277e27e315b46edfb7692b473447d714dd8ee0828",
+      "components/custom-loading/custom-loading.wxml": "ad7a12016d7280bd8ace406d1418048435525215859e6ffca4bbe6b635c94649",
+      "components/custom-loading/custom-loading.wxss": "0adac01a0a70f2e5a1c33577eb5fb3ecb82900fbaedd82b4564388c1d5fbc58e",
+      "components/empty-placeholder/empty-placeholder.js": "31d73782d19c2b3602d35291355d54a2ec9633a4ab42c6373992c306c6e18367",
+      "components/empty-placeholder/empty-placeholder.json": "a86141b3fc9036835f80ed60a03bec91271f26da944e18c7ead57ce95dd9ad67",
+      "components/empty-placeholder/empty-placeholder.wxml": "67fcac615cb807a5f98d14f31dbeff2cefe21060d91eacaf9ae8572e145e69c8",
+      "components/empty-placeholder/empty-placeholder.wxss": "df032848fe47a2083004c5dd6e566393d007ef5844948abce7479d20fd54f2db",
+      "custom-tab-bar/index.js": "9555362bc828a9695f7026a53551a67a8b10b764595027e4f6601d6e5e55b329",
+      "custom-tab-bar/index.json": "8d7520a0c2b604d4fe0197e9f82e3c1cc9f4b96e0712724e71a8d3cd863f51f2",
+      "custom-tab-bar/index.wxml": "81bfec79524e16c360e5b94495ac10061469810e997a4d2164d4540f31d23c43",
+      "custom-tab-bar/index.wxss": "7acb49fb5cfa86caafd38e6e0c631f456b766753201cd27c8a5f0a9e9343c6ea",
+      "images/aboutus.svg": "5537d3fbc71172049dffb0a9f30ce6aba865f159d3c9024f60951881216d0049",
+      "images/activities.svg": "b34f86b81b09fe2ec4aeb4eaefbb8051a54c7549aae98f615935c892234073c3",
+      "images/AI-active.svg": "656df3f70398e25d59449af2bed04efc66fccfe3de7b62144782e973fa482abd",
+      "images/calendar.svg": "9702e5ae78c8947edba156966959e8b09b4f42329e29d877b3fba979d28888e2",
+      "images/cat_rescue.jpg": "0e9d3b8fb201ef997170125d38784e3b501f2c643de1563e01b918e169583533",
+      "images/change_admin_user.svg": "83960d64aabfafc7e1c2f376b290082bd74ed99debb38a27cb1d12e1244ff65b",
+      "images/clock.svg": "6658ffce8421ef882d5958bead947e9ff6ff7398e4a32a51e73b4c6682e95990",
+      "images/default-avatar.svg": "7999960faa67a07e12fa8fb3e3059d04746e76fd294e9e418ef373af4d929aed",
+      "images/edit.svg": "dc9cccf5caa3915d72a9a143d5451bb6321e603df14543322010003d057eee45",
+      "images/empty-box.svg": "677a3fd7de86de7af2bc62b43b03e6d2addebce77511c7a9f5cf3071881559ff",
+      "images/exit.svg": "ddb65ce8ca54c3391e6628e15cbc6c06898c7233b769a21f56e39d1140561b6e",
+      "images/home.svg": "0f978593c256ae3e76f6129bc40b93213873b60f9cb9ba736bad9183d31fb5fe",
+      "images/loading.svg": "4ca79d29084c2c98f7e941ed58089bb5f65e96a2778c0221cc9efbe60d8ba2f5",
+      "images/location.svg": "048eae17c0408d0f513f10bb5964505bf22b500efa429b762821c14a5d8a0176",
+      "images/message.svg": "cb0f5a408dae604cbbff9c85f23ad397a1ebb352c678b67d7998668650313bdd",
+      "images/morentouxiang.svg": "e153bf8b8a5e60452b6744c0f1202100dee71a9d439742c0b188edc7fdfad1c0",
+      "images/picture.svg": "f20661503c2d85bcf7ce8fbac94aecd97c9ee31f41f72fcfedbbe74dac8e6bd4",
+      "images/profile-active.svg": "31fba9a653aefe72eb4609082465b945ae2023710c6c39ef41ca793cff0a992a",
+      "images/qiyeweixinQR.svg": "2d5056782016db58cab1386ad5265bc29174128bdaa55efb08465c3ffeb6aa75",
+      "images/sandbox_poster.jpg": "aa17eddef95e042c65673aa28d84d7814c6f2260ae91678b85867668e501ee8e",
+      "images/search.svg": "297ba5da7334e5304196bede30e30240b5ca18eb322e061cdb003806d9fb8663",
+      "images/uci_bike.jpg": "44c31605bdeb987e1f9bc6127b9a48202d4a975222c8b3afb9ff2639ee1dd838",
+      "images/volunteer-active.svg": "32fdd9c69bb4051dd413900c2f4f6f99c80090af4a19fd173838d3515168eee5",
+      "images/wechat.svg": "d0d2659c74b9ea507f749189a71ec88d0a590222ec5d1e37968b32401a5e7b3a",
+      "pages/.DS_Store": "d65165279105ca6773180500688df4bdc69a2c7b771752f0a46ef120b7fd8ec3",
+      "pages/activity-detail/activity-detail.js": "9f9888a89a8adbafcb69236a6f0054996d2abde192f9526dc3b4fd95c7577946",
+      "pages/activity-detail/activity-detail.json": "451e58506936a7ea49517f57d679bb0f96d094c63e9ed9646086dd2b2647e166",
+      "pages/activity-detail/activity-detail.wxml": "a373c98037c43f2f8035edbebb15b0646b4ba83e85d105602fdcdaebb9d7ab2b",
+      "pages/activity-detail/activity-detail.wxss": "5c98107ad0f9705f975ac3cd26aef8cb066db3aa1d30a479847b32337cd66dd9",
+      "pages/activity-detail/sharing.svg": "3323616e95d06d8ab06ba33373c9e895ec36964df43f2e54e0d98014a66efc2f",
+      "pages/admin-activity-list/admin-activity-list.js": "c1fcd2131444c552f1376f51e61e1ebc0ed433d8a50ff30964128b1abd532a27",
+      "pages/admin-activity-list/admin-activity-list.json": "9137ca389989ecbc9f423419b27d642e3bfe512592e8f17843baace0dd6bc982",
+      "pages/admin-activity-list/admin-activity-list.wxml": "c2de1c010fc495b9eab58c0dfcdb5e452ec33c018bb8ff1e435e9e3b79ea767b",
+      "pages/admin-activity-list/admin-activity-list.wxss": "3b88d5c5e40f01c77b9b7472094812352c358b10230355c8f03e818f14aefc5d",
+      "pages/admin-activity-registrations/admin-activity-registrations.js": "8a89cd80a478fa02ef96aae105ada91dac60a17be27dcea1ec107cafde7d1a97",
+      "pages/admin-activity-registrations/admin-activity-registrations.json": "9f7aed8c3a8227ea83d42450f7986802a967a5a38c62dc0a106febcbbee3974d",
+      "pages/admin-activity-registrations/admin-activity-registrations.wxml": "279ac257685199123176e036f73e115146e557527242217115d2d62c8944f82f",
+      "pages/admin-activity-registrations/admin-activity-registrations.wxss": "f3d00c1c60df1138d570c5b3567c874dfff024cdeb6ab007136cff143d555a24",
+      "pages/admin-banners/admin-banners.js": "f2a577cdd967a07aca06eb6dae7be8aa1118e3fa2ff952cb5c2870df99b224e0",
+      "pages/admin-banners/admin-banners.json": "fc76a2f7fd04a92a926a68ef928bc7ea59ca473231973a12a88dd1cb623efb8c",
+      "pages/admin-banners/admin-banners.wxml": "69b77fd27c34a32e3edd772580e730f614c42cd8164af62e0a9a7cb171da542e",
+      "pages/admin-banners/admin-banners.wxss": "513921db55f2ae3c23d9e9dea3bc0b9024486b80ca396419ef747b22642b4fb1",
+      "pages/admin-publish/admin-publish.js": "a86179430f8013b494a01d2281519fc5e0db9c5b2083e5d50a9ac5197484aa50",
+      "pages/admin-publish/admin-publish.json": "24740534fca7aabb9b6d5a95c2f935bbbde2108e8265bc046afcd07e606f7574",
+      "pages/admin-publish/admin-publish.wxml": "75ffde8208d011b906b15ab2b8cc3bde8acd3c5b016f5951638be543618119ef",
+      "pages/admin-publish/admin-publish.wxss": "88eb690aca87c56631ba9b6a1655b89282dfa4ce94e004c29a999ddf9d3a5a29",
+      "pages/admin-users/admin-users.js": "a085055b4237bcf438c3301c6dc80bfefd16411880f751f781a90b19f3eb1451",
+      "pages/admin-users/admin-users.json": "4fbd63780be5ecf1667b16fd8ac1e3a7e5d71583242aa6fd36bed7cc3a4343c0",
+      "pages/admin-users/admin-users.wxml": "b9ce0974396b809e330f1e3ab568e2423c6f7ff941a5290de53a223333d66e32",
+      "pages/admin-users/admin-users.wxss": "49ee31623cf832433f7e2e8181b491ca302f656b2c2bdc54c83a405c49c1c944",
+      "pages/admin-volunteer/admin-volunteer.js": "983be928bb6481e6fa7e0e90e662845e99204da4e859962faea5eb1394b86814",
+      "pages/admin-volunteer/admin-volunteer.json": "38789f1b46245c6d25a37631eb54d3cd7c5090a6310203ad3f8957d72cd43c46",
+      "pages/admin-volunteer/admin-volunteer.wxml": "284a0db028586effb4d1c086e6411ae933ec38bfc103d28005cc9b3ea9cbd54e",
+      "pages/admin-volunteer/admin-volunteer.wxss": "fff6e7a22dd9e52b0961dd9602b161f3411fb32cb0abb3f3cb3436b884de3257",
+      "pages/ai-research/ai-research.js": "ab4cba37012f890de47af03e67b329fb129166f0dee8b96a1805a314bc2b3263",
+      "pages/ai-research/ai-research.json": "5e409c84ed5b969653ddfac18211ec67ecbc80ca366fd3ca7d25514b499e6711",
+      "pages/ai-research/ai-research.wxml": "f65d97c958c18bcc367a19672bfdbbc9d2530a98ef8e2110f5e1be30d3d7e052",
+      "pages/ai-research/ai-research.wxss": "ac334a0476c21da44b777d79e9b10527d12e2fc5246d1b22ed2c235a4940275a",
+      "pages/all-activities/all-activities.js": "b7a793053f29bd262d2d6b05f16e91ce0a20c570678b117dbfbab8737282b2ac",
+      "pages/all-activities/all-activities.json": "f2176f7880f39890245ff6ef376a445934562c01fd4a73232fceb502d5714236",
+      "pages/all-activities/all-activities.wxml": "ec45be2604fbcf852a9b8ae0eaaa66e8032ac69174b24a3bf3624159c7340bd9",
+      "pages/all-activities/all-activities.wxss": "69c2710c3ca4f028a5dd1400e8c671d009b6d5e21e27868f775014db7d6b4dd9",
+      "pages/index/index.js": "c632dd79ccb4ca9fcfe66e0710d1ab16f41f8a9f0b299b48031e1256d6e2403f",
+      "pages/index/index.json": "b1de2b485f3b1c28ec81a7acc19eb0ed8baef1e613cf0c77835dc0f28ad89887",
+      "pages/index/index.wxml": "8ad5a7d4760d193076554ad115bce9af2450d9f65d29bba7a1b583373e770e5d",
+      "pages/index/index.wxss": "92679cb9bbe2bd2677f3adf76b8ae92cae33af0a58d641aafa194650451d9bc1",
+      "pages/message/message.js": "cd7ecbc20f25bf617ee9c67fcc8b90c57b3c7e83bef62f434387433b764f6fd1",
+      "pages/message/message.json": "a5f83bc45fdb63a63f63842e35f4b3242219d37db19f4f1e971aeba343a1af5f",
+      "pages/message/message.wxml": "51177dc57a7919b0daa2e9656b01e4ed1da979d8d7a411a4266e18f6670a451d",
+      "pages/message/message.wxss": "534bc6980cd8ad1337c171c9c6c709a259da89b970c527b6b47ff8540996dc24",
+      "pages/my-activities/my-activities.js": "a848d5f260ff09fa8682bcb1a1bafa1ceb182a258e63b499bb5a9e2395d7a574",
+      "pages/my-activities/my-activities.json": "02b44ef33431cc74eec4d7c0f856d5beb31aad3dcef16e99cce07d67785e374f",
+      "pages/my-activities/my-activities.wxml": "0459807df0ff8e10d72ea373fb9fb2f2aea2bf572829933acc760ca8e067602d",
+      "pages/my-activities/my-activities.wxss": "f1b90bc94fc2eeb40b7fa38e94778a8001b79cdffc3516a2490a12532029cc0d",
+      "pages/profile/profile.js": "07f74b22f66664c3792c7d87f9357cdba6e0548b749bf9ac99f78474ffe73208",
+      "pages/profile/profile.json": "2f33f784bab060dbacf502f3bf83ff3945787c696e077fa0360b912acdfe69d5",
+      "pages/profile/profile.wxml": "07d6c59f422ebd2d3001f948b579fdcdef3631a13bfc88d17dd4b61aa96e6bb7",
+      "pages/profile/profile.wxss": "414ead592f56ee5f988de086e84c59b76d1846be8f91b1e553810bb743028ea2",
+      "pages/profile-edit/profile-edit.js": "236b17a4ef6ae4b9bfbb1b1fb421b106bd60ca41f2d44dd51c324b284f38f540",
+      "pages/profile-edit/profile-edit.json": "1aac7361aa247971fc67cf133a7a0d67b3cfe0e541f6a20e486f6561f43318f4",
+      "pages/profile-edit/profile-edit.wxml": "9860cf95102b6c4a192b162e7d2531537df4701b06cf57fc540e2c0853827266",
+      "pages/profile-edit/profile-edit.wxss": "b0e87285e78ae19b6b7acf77c8aea9dd706a13e344a9663bed03655411fd09cf",
+      "pages/signup/signup.js": "2727daee8a3345bdc740408b6283a0702cacd21b8d1b0cd58f39360b387306cc",
+      "pages/signup/signup.json": "795283e66047835922e85a7aff2eceec6c2580b1d8719fe04255dce36a5bfa9d",
+      "pages/signup/signup.wxml": "7382c27fc208744bc8725da0635b418bd5590c2a830c6067d5778919c4fe0ce7",
+      "pages/signup/signup.wxss": "86602b65e8f14a824581a0586588091fa29605e15528c3f0385ddcad2727c34b",
+      "pages/signup-success/signup-success.js": "bc7f0b4158b49402536cd291728e7bd02df6a222edfc4498709c55be98c2bc8c",
+      "pages/signup-success/signup-success.json": "e20efd89be35208d1f375571a4536d41a0f27987b4a5f090ddba9c8d29769172",
+      "pages/signup-success/signup-success.wxml": "807cde6319470da3081f409cd7b36701b3a869facd43819224d48b7ab0806f4f",
+      "pages/signup-success/signup-success.wxss": "a7dff740a2158517f21de112024b4e89bb74f4cf1b13ff146c52f0d5cad17a5e",
+      "pages/webview/webview.js": "b73932edc60e28876814484a84af34e2b551e70e5be1b601525cd709132b3620",
+      "pages/webview/webview.json": "0ce3e80a0fcebd78829dad65023f839eedf75ac643052abf25a6451e9c1e250e",
+      "pages/webview/webview.wxml": "60291963567edee9a0279a242ea9c9b277a3394856f4463c15cfe0b98f0899ad",
+      "pages/webview/webview.wxss": "959fcd2524ec756a1daa3c14df1b8cac11f088207a08064473aa3d562f55e977",
+      "utils/pinyin.js": "7cb4e4ef972da1a4a789af4efd0d6f923ff6d5f8ef39054e1a332caa07abf5d1",
+      "utils/util.js": "6f8c260bd42e0db63df133ce7bfed3233b94af864fc0a3ed215382b4138dfa83"
+    },
+    "verification": "113 frozen hashes match; homepage UTC regression passed; own deadline changes retained, banner handler and admin pages equal baseline; native compiler/upload succeeded.",
+    "heldHomepageFunction": "pages/index/index.js onBannerTap from 1c6aafe; own deadline changes retained"
+  },
+  "verification": {
+    "simulatorDetails": "passed_synthetic_data",
+    "liveRoutes": 9,
+    "liveRoutesVersion": "20261023.2",
+    "simulatorRepeatApprove": "closed_without_submission",
+    "liveDetailWithGender": 11,
+    "liveEmptyWorkbookZipHeader": true,
+    "androidDevice": "pending",
+    "liveDetailWithAge": 0,
+    "iosDevice": "pending",
+    "workbookOpenpyxl": "passed_without_warnings",
+    "simulatorEmptyReject": "blocked_without_submission",
+    "currentTests": 18,
+    "consoleErrorMatches": 0,
+    "liveEmptyWorkbookBytes": 3062,
+    "liveDetailWithName": 11,
+    "liveDetailRecords": 11,
+    "passingTests": 18,
+    "utcDeadlineTests": "passed"
+  },
+  "parallelWork": "User confirmed banner editing belongs to another Agent; preserve and exclude its changes from this release.",
+  "recordedAt": "2026-10-23T07:46:39.812325+00:00",
+  "database": {
+    "migration": "no_bulk_migration; lazy registration_revision; historical records retained",
+    "indexes": "unchanged; volunteer_registrations _openid and _id verified",
+    "securityRules": "tool_does_not_return_rules; unchanged_not_verified"
+  },
+  "storage": {
+    "permissions": "unchanged",
+    "functionUploadAndClientDownload": "passed_synthetic_empty_workbook"
+  }
+}

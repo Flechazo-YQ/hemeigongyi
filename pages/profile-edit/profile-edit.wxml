@@ -23,6 +23,11 @@
       </view>
 
       <view class="form-item">
+        <text class="label">年龄</text>
+        <input class="input" name="age" type="number" maxlength="3" placeholder="请输入年龄（选填）" value="{{userInfo.age}}" bindinput="onInputChange" data-field="age" />
+      </view>
+
+      <view class="form-item">
         <text class="label">学院</text>
         <input class="input" name="college" placeholder="请输入学院" value="{{userInfo.college}}" bindinput="onInputChange" data-field="college" />
       </view>

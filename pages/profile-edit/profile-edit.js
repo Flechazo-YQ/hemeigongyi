@@ -132,6 +132,11 @@ Page({
 
   onSaveProfile(e) {
     const { userInfo } = this.data;
+    const ageText = String(userInfo.age ?? '').trim();
+    if (ageText && (!/^\d{1,3}$/.test(ageText) || Number(ageText) > 120)) {
+      wx.showToast({ title: '请填写0至120岁的整数年龄', icon: 'none' });
+      return;
+    }
 
     if (!userInfo.name) {
       wx.showToast({ title: '请填写姓名', icon: 'none' });
@@ -160,6 +165,7 @@ Page({
       name: userInfo.name,
       nickName: userInfo.name, // Sync nickName with name for compatibility
       gender: userInfo.gender,
+      age: ageText === '' ? null : Number(ageText),
       college: userInfo.college,
       majorClass: userInfo.majorClass,
       studentId: userInfo.studentId,

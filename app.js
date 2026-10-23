@@ -14,18 +14,29 @@ App({
   },
 
   checkLogin: function () {
-    // 检查本地缓存中是否有登录状态
     const loginState = wx.getStorageSync('loginState');
-    if (loginState && loginState.isLogin) {
-      // 恢复全局状态
-      this.globalData.isLogin = true;
-      this.globalData.userType = loginState.userType;
-      this.globalData.userInfo = loginState.userInfo;
+    const userInfo = loginState && loginState.isLogin && loginState.userInfo;
+    const isLogin = !!(userInfo && userInfo._id);
+    if (this.globalData.isLogin !== isLogin ||
+        (this.globalData.userInfo && this.globalData.userInfo._id) !== (isLogin ? userInfo._id : null)) {
+      this.globalData.loginRevision += 1;
     }
+    this.globalData.isLogin = isLogin;
+    this.globalData.userInfo = isLogin ? userInfo : null;
+    this.globalData.viewMode = isLogin ? (loginState.viewMode || userInfo.role) : 'user';
+    this.normalizeViewMode();
   },
 
-  updateTabBar: function (userType) {
-    // Just update the tab bar component state if it exists
+  normalizeViewMode: function () {
+    const { isLogin, userInfo, viewMode } = this.globalData;
+    const role = isLogin && userInfo && ['admin', 'publisher'].includes(userInfo.role) ? userInfo.role : 'user';
+    this.globalData.userType = isLogin ? role : null;
+    this.globalData.viewMode = role !== 'user' && viewMode !== 'user' ? role : 'user';
+    return this.globalData.viewMode;
+  },
+
+  updateTabBar: function () {
+    this.normalizeViewMode();
     const pages = getCurrentPages();
     if (pages.length) {
       const currentPage = pages[pages.length - 1];
@@ -42,6 +53,7 @@ App({
     userType: null, // 'user' or 'admin'
     viewMode: null, // 'user' or 'admin' - controls the UI view
     userInfo: null,
+    loginRevision: 0,
     userTabBarList: [
       {
         "pagePath": "/pages/index/index",

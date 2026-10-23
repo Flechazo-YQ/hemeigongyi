@@ -1,10 +1,10 @@
-const app = getApp();
-
 Page({
   data: {
     banners: [],
     loading: false,
     showModal: false,
+    editingId: '',
+    submitting: false,
     tempImgUrl: '',
     tempLink: '',
     tempTitle: '',
@@ -91,17 +91,64 @@ Page({
   showAddModal() {
     this.setData({
       showModal: true,
+      editingId: '',
       tempImgUrl: '',
-      tempLink: '',
       tempLink: '',
       tempTitle: '',
       tempSubtitle: '',
       tempTag: ''
     });
+    this.originalForm = JSON.stringify(this.getForm());
+  },
+
+  editBanner(e) {
+    const banner = this.data.banners.find(item => item._id === e.currentTarget.dataset.id);
+    if (!banner || banner.isHardcoded || this.data.submitting) return;
+    this.setData({
+      showModal: true,
+      editingId: banner._id,
+      tempImgUrl: banner.url || '',
+      tempLink: banner.link || '',
+      tempTitle: banner.title || '',
+      tempSubtitle: banner.subtitle || '',
+      tempTag: banner.tag || ''
+    });
+    this.originalImageUrl = this.data.tempImgUrl;
+    this.originalForm = JSON.stringify(this.getForm());
+  },
+
+  getForm() {
+    const { tempImgUrl, tempLink, tempTitle, tempSubtitle, tempTag } = this.data;
+    return { tempImgUrl, tempLink, tempTitle, tempSubtitle, tempTag };
+  },
+
+  updateForm(patch) {
+    this.setData(patch);
+    if (wx.enableAlertBeforeUnload && this.originalForm !== JSON.stringify(this.getForm())) {
+      wx.enableAlertBeforeUnload({ message: '修改还未保存，确定离开吗？' });
+    } else if (wx.disableAlertBeforeUnload) {
+      wx.disableAlertBeforeUnload();
+    }
   },
 
   hideAddModal() {
-    this.setData({ showModal: false });
+    if (this.data.submitting) return;
+    if (this.originalForm === JSON.stringify(this.getForm())) {
+      this.closeModal();
+      return;
+    }
+    wx.showActionSheet({
+      itemList: ['保存修改', '放弃修改', '继续编辑'],
+      success: res => {
+        if (res.tapIndex === 0) this.submitBanner();
+        if (res.tapIndex === 1) this.closeModal();
+      }
+    });
+  },
+
+  closeModal() {
+    this.setData({ showModal: false, editingId: '' });
+    if (wx.disableAlertBeforeUnload) wx.disableAlertBeforeUnload();
   },
 
   preventBubble() { },
@@ -113,73 +160,71 @@ Page({
       sourceType: ['album', 'camera'],
       success: res => {
         const tempFilePath = res.tempFiles[0].tempFilePath;
-        this.setData({ tempImgUrl: tempFilePath });
+        this.updateForm({ tempImgUrl: tempFilePath });
       }
     });
   },
 
   inputLink(e) {
-    this.setData({ tempLink: e.detail.value });
+    this.updateForm({ tempLink: e.detail.value });
   },
 
   inputTitle(e) {
-    this.setData({ tempTitle: e.detail.value });
+    this.updateForm({ tempTitle: e.detail.value });
   },
 
   inputSubtitle(e) {
-    this.setData({ tempSubtitle: e.detail.value });
+    this.updateForm({ tempSubtitle: e.detail.value });
   },
 
   inputTag(e) {
-    this.setData({ tempTag: e.detail.value });
+    this.updateForm({ tempTag: e.detail.value });
   },
 
-  submitBanner() {
-    const { tempImgUrl, tempLink, tempTitle, tempSubtitle, tempTag } = this.data;
+  async submitBanner() {
+    if (this.data.submitting) return;
+    const { editingId, tempImgUrl, tempLink, tempTitle, tempSubtitle, tempTag } = this.data;
     if (!tempImgUrl) {
       wx.showToast({ title: '请上传图片', icon: 'none' });
       return;
     }
 
-    this.setData({ loading: true });
-
-    // 1. Upload image to cloud storage
-    const cloudPath = `PastActivities/${Date.now()}-${Math.floor(Math.random() * 1000)}.jpg`;
-
-    wx.cloud.uploadFile({
-      cloudPath: cloudPath,
-      filePath: tempImgUrl,
-      success: res => {
-        const fileID = res.fileID;
-
-        // 2. Save to database via cloud function
-        wx.cloud.callFunction({
-          name: 'manageBanners',
-          data: {
-            action: 'add',
-            url: fileID,
-            link: tempLink,
-            title: tempTitle,
-            subtitle: tempSubtitle,
-            tag: tempTag
-          },
-          success: dbRes => {
-            this.hideAddModal();
-            this.loadBanners();
-            wx.showToast({ title: '添加成功' });
-          },
-          fail: err => {
-            console.error(err);
-            wx.showToast({ title: '保存失败', icon: 'none' });
-          }
+    const link = tempLink.trim();
+    if (link && !/^https?:\/\/[^\s/?#]+(?:[/?#][^\s]*)?$/i.test(link)) {
+      wx.showToast({ title: '请填写完整的网页链接', icon: 'none' });
+      return;
+    }
+    this.setData({ submitting: true });
+    try {
+      const data = {
+        action: editingId ? 'update' : 'add',
+        link,
+        title: tempTitle.trim(),
+        subtitle: tempSubtitle.trim(),
+        tag: tempTag.trim()
+      };
+      if (editingId) data.id = editingId;
+      // 云端读取的图片可能是临时地址，未换图时保留原始存储引用。
+      if (!editingId || tempImgUrl !== this.originalImageUrl) {
+        const image = await wx.cloud.uploadFile({
+          cloudPath: `PastActivities/${Date.now()}-${Math.floor(Math.random() * 1000)}.jpg`,
+          filePath: tempImgUrl
         });
-      },
-      fail: err => {
-        console.error(err);
-        wx.showToast({ title: '图片上传失败', icon: 'none' });
-        this.setData({ loading: false });
+        data.url = image.fileID;
       }
-    });
+      const { result } = await wx.cloud.callFunction({ name: 'manageBanners', data });
+      if (!result || result.success === false || (editingId ? result.success !== true : !result._id)) {
+        throw new Error((result && result.error) || '内容已不存在或保存失败');
+      }
+      this.closeModal();
+      this.loadBanners();
+      wx.showToast({ title: editingId ? '保存成功' : '添加成功' });
+    } catch (err) {
+      console.error(err);
+      wx.showToast({ title: err.message || '保存失败，请重试', icon: 'none' });
+    } finally {
+      this.setData({ submitting: false });
+    }
   },
 
   deleteBanner(e) {

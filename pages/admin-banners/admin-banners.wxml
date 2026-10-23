@@ -19,7 +19,10 @@
             <text class="banner-link">🔗 {{item.link || '无跳转链接'}}</text>
           </view>
           <view class="banner-actions">
-            <view wx:if="{{!item.isHardcoded}}" class="delete-btn" bindtap="deleteBanner" data-id="{{item._id}}">删除</view>
+            <block wx:if="{{!item.isHardcoded}}">
+              <button size="mini" class="edit-btn" bindtap="editBanner" data-id="{{item._id}}">编辑</button>
+              <button size="mini" class="delete-btn" bindtap="deleteBanner" data-id="{{item._id}}">删除</button>
+            </block>
             <view wx:else class="hardcoded-badge">固定展示 (系统内置)</view>
           </view>
         </view>
@@ -41,7 +44,7 @@
   <!-- 添加弹窗 -->
   <view class="modal-mask" wx:if="{{showModal}}" bindtap="hideAddModal">
     <view class="modal-card" catchtap="preventBubble">
-      <view class="modal-title">新增轮播图</view>
+      <view class="modal-title">{{editingId ? '编辑往期活动' : '新增轮播图'}}</view>
       
       <scroll-view scroll-y class="modal-scroll">
         <view class="form-group">
@@ -72,13 +75,13 @@
         
         <view class="form-group">
           <text class="form-label">跳转链接 (选填)</text>
-          <input class="form-input" placeholder="填入公众号文章链接" value="{{tempLink}}" bindinput="inputLink" />
+          <input class="form-input" maxlength="8192" placeholder="粘贴已发布的公众号文章完整链接" value="{{tempLink}}" bindinput="inputLink" />
         </view>
       </scroll-view>
 
       <view class="modal-actions">
-        <button class="btn-cancel" bindtap="hideAddModal">取消</button>
-        <button class="btn-confirm" bindtap="submitBanner">确认添加</button>
+        <button class="btn-cancel" disabled="{{submitting}}" bindtap="hideAddModal">取消</button>
+        <button class="btn-confirm" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submitBanner">{{submitting ? '保存中' : (editingId ? '保存修改' : '确认添加')}}</button>
       </view>
     </view>
   </view>

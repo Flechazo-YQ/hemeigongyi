@@ -1,0 +1,9 @@
+{
+  "desc": "公开活动页面可被微信搜索收录，个人资料与管理页面不收录。",
+  "rules": [
+    { "action": "allow", "page": "pages/index/index" },
+    { "action": "allow", "page": "pages/all-activities/all-activities" },
+    { "action": "allow", "page": "pages/activity-detail/activity-detail" },
+    { "action": "disallow", "page": "*" }
+  ]
+}

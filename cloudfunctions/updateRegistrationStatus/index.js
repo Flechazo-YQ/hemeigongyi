@@ -1,88 +1,68 @@
-// 云函数入口文件
 const cloud = require('wx-server-sdk')
 
-cloud.init({
-  env: cloud.DYNAMIC_CURRENT_ENV
-})
+cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
-const db = cloud.database()
+const db = cloud.database({ throwOnNotFound: false })
+const INACTIVE_STATUSES = ['已拒绝', 'rejected', '已取消', 'cancelled']
 
 async function assertAdmin() {
   const { OPENID } = cloud.getWXContext()
+  if (!OPENID) throw new Error('请先登录')
   const { data } = await db.collection('users')
-    .where({ _openid: OPENID, role: 'admin' })
-    .limit(1)
-    .get()
-
+    .where({ _openid: OPENID, role: 'admin' }).limit(1).get()
   if (!data.length) throw new Error('无管理员权限')
 }
 
-async function rejectRegistration(collectionName, id) {
-  const isVolunteer = collectionName === 'volunteer_registrations'
-  const routeField = isVolunteer ? 'task_id' : 'route_id'
-  const countField = isVolunteer ? 'volunteer_count' : 'current_count'
-
+async function updateRegistration(collectionName, id, status, reason) {
   return db.runTransaction(async transaction => {
-    const { data: registration } = await transaction.collection(collectionName).doc(id).get()
-    if (!registration) throw new Error('报名记录不存在')
+    const registrationRef = transaction.collection(collectionName).doc(id)
+    const { data: registration } = await registrationRef.get()
+    if (!registration) {
+      if (status === '已拒绝') return { alreadyRemoved: true }
+      throw new Error('报名记录不存在，请刷新列表')
+    }
+    const activityId = registration.task_id || registration.route_id
+    const activityRef = activityId ? transaction.collection('research_routes').doc(activityId) : null
+    const activity = activityRef ? (await activityRef.get()).data : null
 
-    await transaction.collection(collectionName).doc(id).remove()
+    if (status === '已通过') {
+      if (INACTIVE_STATUSES.includes(registration.status)) throw new Error('报名已取消或拒绝，请刷新列表')
+      if (['已通过', 'approved'].includes(registration.status)) return { alreadyApproved: true }
+      if (!activity || activity.deleting) throw new Error('活动已删除或正在删除，请刷新列表')
+      await registrationRef.update({ data: { status, audit_reason: reason, audit_time: new Date() } })
+      return {}
+    }
 
-    const activityId = registration[routeField]
-    if (!activityId) return
-
-    const { data: activity } = await transaction.collection('research_routes').doc(activityId).get()
-    if (!activity) return
-
-    await transaction.collection('research_routes').doc(activityId).update({
-      data: {
-        [countField]: Math.max(0, Number(activity[countField]) || 0) - 1,
+    // 所有读操作先完成；拒绝和报名争用同一活动文档，报名快照才能检测到并发删除。
+    await registrationRef.remove()
+    if (activity) {
+      const patch = {
+        registration_revision: (Number(activity.registration_revision) || 0) + 1,
         update_time: new Date()
       }
-    })
+      if (!INACTIVE_STATUSES.includes(registration.status)) {
+        const countField = activity.type === 'volunteer' ? 'volunteer_count' : 'current_count'
+        patch[countField] = Math.max(0, (Number(activity[countField]) || 0) - 1)
+      }
+      await activityRef.update({ data: patch })
+    }
+    return {}
   })
 }
 
-// 云函数入口函数
-exports.main = async (event, context) => {
+exports.main = async (event = {}) => {
   try {
-    const { id, sourceCollection, status, reason } = event;
-    
-    if (!id || !status) {
-      return {
-        success: false,
-        error: '缺少必要参数'
-      }
-    }
-    
+    const { id, status, sourceCollection } = event
+    if (typeof id !== 'string' || !id.trim() || !['已通过', '已拒绝'].includes(status)) throw new Error('审核参数无效')
+    if (sourceCollection && !['registrations', 'volunteer_registrations'].includes(sourceCollection)) throw new Error('报名来源无效')
     await assertAdmin()
-
-    const collectionName = sourceCollection === 'registrations'
-      ? 'registrations'
-      : 'volunteer_registrations'
-
-    if (status === '已拒绝') {
-      await rejectRegistration(collectionName, id)
-    } else {
-      await db.collection(collectionName).doc(id).update({
-        data: {
-          status: status,
-          audit_reason: reason || '',
-          audit_time: new Date()
-        }
-      })
-    }
-    
-    return {
-      success: true,
-      data: { status }
-    }
-    
+    const reason = typeof event.reason === 'string' ? event.reason.trim() : ''
+    if (status === '已拒绝' && !reason) throw new Error('拒绝时请填写审核意见')
+    const collectionName = sourceCollection || 'volunteer_registrations'
+    const result = await updateRegistration(collectionName, id, status, reason)
+    return { success: true, data: { status, ...result } }
   } catch (error) {
-    console.error(error)
-    return {
-      success: false,
-      error: error.message
-    }
+    console.error('审核失败:', error.code || 'REGISTRATION_AUDIT_FAILED')
+    return { success: false, error: error.message || '审核失败，请重试' }
   }
 }

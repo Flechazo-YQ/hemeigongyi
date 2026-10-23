@@ -1,4 +1,5 @@
 const app = getApp();
+const { deadlineTime, isRegistrationClosed } = require('../../utils/util');
 
 Page({
   data: {
@@ -68,12 +69,10 @@ Page({
   },
 
   processActivityData(route) {
-    const now = new Date();
-    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    
-    let status = 'recruiting';
-    if (route.deadline && route.deadline < today) {
-        status = 'ended';
+    const status = isRegistrationClosed(route) ? 'ended' : 'recruiting';
+    const deadline = deadlineTime(route.deadline);
+    if (deadline !== null && !Number.isFinite(deadline)) {
+      wx.showToast({ title: '活动截止时间无效，请联系管理员', icon: 'none' });
     }
 
     this.setData({
@@ -109,9 +108,16 @@ Page({
   },
 
   onSignup() {
-    if (this.data.activity.status === 'ended') {
-        wx.showToast({ title: '活动已截止', icon: 'none' });
-        return;
+    const activity = this.data.activity;
+    if (isRegistrationClosed(activity)) {
+      const deadline = deadlineTime(activity.deadline);
+      const title = deadline !== null && !Number.isFinite(deadline)
+        ? '活动截止时间无效，请联系管理员'
+        : (activity.enabled === false || activity.enabled === 0 || activity.enabled === 'false' || activity.deleting
+          ? '活动已停用，无法报名' : '活动已截止');
+      this.setData({ 'activity.status': 'ended' });
+      wx.showToast({ title, icon: 'none' });
+      return;
     }
     if (!this.data.registrationChecked) return;
     if (this.data.hasRegistered) {

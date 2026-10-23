@@ -34,7 +34,8 @@ Page({
     return wx.cloud.callFunction({
       name: 'getRoutes',
       data: {
-        includePendingCount: true
+        includePendingCount: true,
+        includeDeleting: true
       }
     }).then(res => {
       if (!res.result || !res.result.success) {
@@ -67,6 +68,7 @@ Page({
           if (current >= quota) status = '已满员';
           // 如果有截止日期且已过
           if (deadline && new Date(deadline) < new Date()) status = '已结束';
+          if (item.deleting) status = '删除未完成，请重试';
 
           return {
             ...item,

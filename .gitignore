@@ -6,7 +6,6 @@ dist/
 .idea/
 .vscode/
 project.private.config.json
-sitemap.json
 cloudfunctions/**/node_modules/
 .python-version
 __pycache__/

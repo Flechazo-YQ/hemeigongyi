@@ -16,8 +16,7 @@
         
         <view class="card-content">
           <text class="activity-title">{{item.displayTitle}}</text>
-          <text class="sub-info" wx:if="{{item.type === 'volunteer'}}">报名人: {{item.volunteerName}}</text>
-          <text class="sub-info" wx:else>报名人: {{item.child_name}}</text>
+          <text class="sub-info">报名人: {{item.displayName || item.volunteerName || item.name || item.child_name || '未填写'}}</text>
         </view>
 
         <view class="card-footer" wx:if="{{item.status === '已拒绝' || item.status === 'rejected' || item.audit_reason}}">

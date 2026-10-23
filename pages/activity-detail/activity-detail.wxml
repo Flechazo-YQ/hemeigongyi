@@ -3,7 +3,7 @@
 <!-- 顶部标题区域 -->
 <view class="card-box header-section">
   <view class="header-tags">
-    <text class="tag status-tag">正在报名</text>
+    <text class="tag status-tag">{{activity.status === 'ended' ? '已截止' : '正在报名'}}</text>
     <text class="tag category-tag">{{activity.category || '研学活动'}}</text>
   </view>
   <text class="header-title">{{activity.title}}</text>
